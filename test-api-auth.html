@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #28a745;
+        }
+        .error {
+            background: #dc3545;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success-result {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error-result {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .token-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .test-section {
+            border-top: 2px solid #dee2e6;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test API Authentication System</h1>
+    
+    <!-- Login Section -->
+    <div class="container">
+        <h2>1. Login để lấy Token</h2>
+        <div class="form-group">
+            <label>API URL:</label>
+            <input type="text" id="apiUrl" value="https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app" />
+        </div>
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" id="username" value="admin" />
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="password" value="admin123" />
+        </div>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testLoginDB()">Test Login DB</button>
+        
+        <div id="loginResult"></div>
+        <div id="tokenDisplay" class="token-display" style="display:none;">
+            <strong>Token:</strong> <span id="tokenValue"></span>
+        </div>
+    </div>
+
+    <!-- Test API Endpoints -->
+    <div class="container">
+        <h2>2. Test API Endpoints với Token</h2>
+        
+        <div class="test-section">
+            <h3>Test Admin Keys API</h3>
+            <button onclick="testListKeys()">Get List Keys</button>
+            <button onclick="testCreateKey()">Create New Key</button>
+            <div id="keysResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Redeem Key</h3>
+            <div class="form-group">
+                <label>Key to Redeem:</label>
+                <input type="text" id="keyToRedeem" placeholder="Paste key here" />
+            </div>
+            <button onclick="testRedeemKey()">Test Redeem Key</button>
+            <div id="redeemResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Upload Tokens</h3>
+            <button onclick="testUploadTokens()">Test Upload Excel</button>
+            <div id="uploadResult"></div>
+        </div>
+    </div>
+
+    <!-- Manual Token Generation -->
+    <div class="container">
+        <h2>3. Generate Token Manually (No API)</h2>
+        <button onclick="generateManualToken()">Generate Token với Secret Key</button>
+        <div id="manualTokenResult"></div>
+    </div>
+
+    <script>
+        let currentToken = localStorage.getItem('authToken') || '';
+        let apiBaseUrl = 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app';
+        
+        // Update API URL
+        document.getElementById('apiUrl').addEventListener('change', (e) => {
+            apiBaseUrl = e.target.value;
+        });
+
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showResult('loginResult', 'Testing login...', 'info');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('authToken', currentToken);
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.getElementById('tokenValue').textContent = currentToken;
+                    showResult('loginResult', `✅ Login Success!\n\nUser: ${data.user.username}\nToken saved!`, 'success');
+                } else {
+                    showResult('loginResult', `❌ Login Failed: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('loginResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLoginDB() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showResult('loginResult', 'Testing login-db...', 'info');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/login-db`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('authToken', currentToken);
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.getElementById('tokenValue').textContent = currentToken;
+                    showResult('loginResult', `✅ Login DB Success!\n\nUser: ${data.user.username}\nRole: ${data.user.role}\nToken saved!`, 'success');
+                } else {
+                    showResult('loginResult', `❌ Login DB Failed: ${data.error || 'Unknown error'}\n${data.details || ''}`, 'error');
+                }
+            } catch (error) {
+                showResult('loginResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testListKeys() {
+            if (!currentToken) {
+                showResult('keysResult', '❌ Please login first!', 'error');
+                return;
+            }
+            
+            showResult('keysResult', 'Loading keys...', 'info');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/admin-keys`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('keysResult', `✅ Keys loaded successfully!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('keysResult', `❌ Failed to load keys: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('keysResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateKey() {
+            if (!currentToken) {
+                showResult('keysResult', '❌ Please login first!', 'error');
+                return;
+            }
+            
+            showResult('keysResult', 'Creating key...', 'info');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/admin-keys`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        count: 1,
+                        requests: 100,
+                        description: 'Test key from auth test'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('keysResult', `✅ Key created successfully!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                    if (data.keys && data.keys[0]) {
+                        document.getElementById('keyToRedeem').value = data.keys[0];
+                    }
+                } else {
+                    showResult('keysResult', `❌ Failed to create key: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('keysResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRedeemKey() {
+            if (!currentToken) {
+                showResult('redeemResult', '❌ Please login first!', 'error');
+                return;
+            }
+            
+            const key = document.getElementById('keyToRedeem').value;
+            if (!key) {
+                showResult('redeemResult', '❌ Please enter a key!', 'error');
+                return;
+            }
+            
+            showResult('redeemResult', 'Redeeming key...', 'info');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/redeem-key`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ key })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('redeemResult', `✅ Key redeemed successfully!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('redeemResult', `❌ Failed to redeem key: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('redeemResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUploadTokens() {
+            if (!currentToken) {
+                showResult('uploadResult', '❌ Please login first!', 'error');
+                return;
+            }
+            
+            showResult('uploadResult', 'Testing upload...', 'info');
+            
+            // Create a simple Excel file content
+            const excelContent = `Token1\nToken2\nToken3`;
+            const blob = new Blob([excelContent], { type: 'text/csv' });
+            const formData = new FormData();
+            formData.append('file', blob, 'test.csv');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/admin-upload-tokens`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('uploadResult', `✅ Upload test successful!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('uploadResult', `❌ Upload failed: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('uploadResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        function generateManualToken() {
+            // This simulates what the server does
+            const header = btoa(JSON.stringify({alg: 'HS256', typ: 'JWT'}));
+            const payload = btoa(JSON.stringify({
+                userId: 1,
+                username: 'admin',
+                role: 'admin',
+                iat: Math.floor(Date.now() / 1000),
+                exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60)
+            }));
+            
+            const token = `${header}.${payload}.SIGNATURE_PLACEHOLDER`;
+            
+            showResult('manualTokenResult', 
+                `📋 Generated Token Structure:\n\n` +
+                `Token: ${token}\n\n` +
+                `Secret Key Used: unified-aivannang-secret-2024\n\n` +
+                `Note: This is for testing only. Real signature needs server-side generation.`,
+                'success'
+            );
+            
+            document.getElementById('tokenDisplay').style.display = 'block';
+            document.getElementById('tokenValue').textContent = token;
+        }
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const className = type === 'success' ? 'success-result' : 
+                            type === 'error' ? 'error-result' : 
+                            'result';
+            element.innerHTML = `<div class="result ${className}">${message}</div>`;
+        }
+
+        // Load saved token on page load
+        if (currentToken) {
+            document.getElementById('tokenDisplay').style.display = 'block';
+            document.getElementById('tokenValue').textContent = currentToken;
+        }
+    </script>
+</body>
+</html>

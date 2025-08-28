@@ -1,0 +1,15 @@
+{
+  "name": "webcursor",
+  "version": "1.0.0",
+  "description": "Một ứng dụng web fullstack cho phép người dùng đăng ký/đăng nhập, nhập key để quy đổi thành credit, và sử dụng credit để generate token.",
+  "main": "test-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.11.0"
+  }
+}

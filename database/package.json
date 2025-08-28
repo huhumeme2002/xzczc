@@ -1,0 +1,26 @@
+{
+  "name": "aivannang-database",
+  "version": "1.0.0",
+  "description": "Database management utilities for AiVanNang",
+  "main": "db.js",
+  "scripts": {
+    "init": "node manage-db.js init",
+    "test": "node manage-db.js test",
+    "stats": "node manage-db.js stats",
+    "create-admin": "node manage-db.js create-admin",
+    "add-keys": "node manage-db.js add-keys",
+    "list-users": "node manage-db.js list-users",
+    "list-keys": "node manage-db.js list-keys"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "keywords": ["database", "postgresql", "neon", "management"],
+  "author": "AiVanNang",
+  "license": "MIT"
+}
