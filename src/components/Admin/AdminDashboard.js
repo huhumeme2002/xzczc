@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     activeUsers: 0,
     totalKeys: 0,
     usedKeys: 0,
-    totalCredits: 0,
+    totalRequests: 0,
     totalTokens: 0
   });
   const [users, setUsers] = useState([]);
@@ -41,27 +41,24 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Load users
-      const usersData = await adminService.getUsers();
-      setUsers(usersData.users || []);
-      
+      // Load users (paginated)
+      const usersRes = await adminService.getUsers();
+      setUsers(usersRes.users || []);
+
       // Load keys
-      const keysData = await adminService.getKeys();
-      setKeys(keysData.keys || []);
-      
-      // Calculate stats
-      const totalUsers = usersData.users?.length || 0;
-      const activeUsers = usersData.users?.filter(u => u.is_active)?.length || 0;
-      const totalKeys = keysData.keys?.length || 0;
-      const usedKeys = keysData.keys?.filter(k => k.used_by)?.length || 0;
-      
+      const keysRes = await adminService.getKeys();
+      setKeys(keysRes.keys || []);
+
+      // Dashboard stats from manage-users GET
+      const dashboard = await adminService.getDashboard();
+
       setStats({
-        totalUsers,
-        activeUsers,
-        totalKeys,
-        usedKeys,
-        totalCredits: usersData.users?.reduce((sum, u) => sum + (u.credits || 0), 0) || 0,
-        totalTokens: keysData.tokens?.length || 0
+        totalUsers: parseInt(dashboard?.stats?.total_users || 0),
+        activeUsers: parseInt(dashboard?.stats?.active_users || 0),
+        totalKeys: keysRes.keys?.length || 0,
+        usedKeys: (keysRes.keys || []).filter(k => k.is_used).length || 0,
+        totalRequests: parseInt(dashboard?.stats?.total_requests || 0),
+        totalTokens: (dashboard?.topRequestUsers || []).reduce((s) => s, 0) // placeholder
       });
       
     } catch (error) {
@@ -77,15 +74,15 @@ const AdminDashboard = () => {
       });
       
       setUsers([
-        { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', credits: 1000, is_active: true, created_at: new Date().toISOString() },
-        { id: 2, username: 'user1', email: 'user1@example.com', role: 'user', credits: 500, is_active: true, created_at: new Date().toISOString() },
-        { id: 3, username: 'user2', email: 'user2@example.com', role: 'user', credits: 200, is_active: false, created_at: new Date().toISOString() }
+        { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', requests: 1000, is_active: true, created_at: new Date().toISOString() },
+        { id: 2, username: 'user1', email: 'user1@example.com', role: 'user', requests: 500, is_active: true, created_at: new Date().toISOString() },
+        { id: 3, username: 'user2', email: 'user2@example.com', role: 'user', requests: 200, is_active: false, created_at: new Date().toISOString() }
       ]);
       
       setKeys([
-        { id: 1, key_value: 'KEY-ABC123DEF456', credits: 100, used_by: 'user1', used_at: new Date().toISOString() },
-        { id: 2, key_value: 'KEY-XYZ789GHI012', credits: 200, used_by: null, used_at: null },
-        { id: 3, key_value: 'KEY-JKL345MNO678', credits: 150, used_by: 'user2', used_at: new Date().toISOString() }
+        { id: 1, key_value: 'KEY-ABC123DEF456', requests: 100, used_by: 'user1', used_at: new Date().toISOString() },
+        { id: 2, key_value: 'KEY-XYZ789GHI012', requests: 200, used_by: null, used_at: null },
+        { id: 3, key_value: 'KEY-JKL345MNO678', requests: 150, used_by: 'user2', used_at: new Date().toISOString() }
       ]);
     } finally {
       setLoading(false);
@@ -284,7 +281,7 @@ const AdminDashboard = () => {
                     Role
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Credits
+                    Requests
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Trạng thái
@@ -309,7 +306,7 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.credits?.toLocaleString() || 0}
+                      {user.requests?.toLocaleString() || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`badge ${user.is_active ? 'badge-success' : 'badge-error'}`}>
@@ -345,7 +342,7 @@ const AdminDashboard = () => {
                     Key
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Credits
+                    Requests
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Người dùng
@@ -367,7 +364,7 @@ const AdminDashboard = () => {
                       </code>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {key.credits}
+                      {key.requests}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {key.used_by || '-'}

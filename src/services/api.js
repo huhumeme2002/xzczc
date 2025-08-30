@@ -100,6 +100,11 @@ export const adminService = {
     return response.data;
   },
 
+  async updateUser(userId, updates) {
+    const response = await api.put(API_CONFIG.ENDPOINTS.ADMIN_USERS, { userId, updates });
+    return response.data;
+  },
+
   async manageUsers(userData) {
     const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_MANAGE_USERS, userData);
     return response.data;
@@ -107,6 +112,11 @@ export const adminService = {
 
   async getAnalytics() {
     const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_ANALYTICS);
+    return response.data;
+  },
+
+  async getDashboard() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_MANAGE_USERS);
     return response.data;
   },
 
