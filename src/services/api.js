@@ -85,8 +85,8 @@ export const keyService = {
 
 // Admin Services
 export const adminService = {
-  async getKeys() {
-    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_KEYS);
+  async getKeys(params = {}) {
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_KEYS, { params });
     return response.data;
   },
 
@@ -95,8 +95,8 @@ export const adminService = {
     return response.data;
   },
 
-  async getUsers() {
-    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_USERS);
+  async getUsers(params = {}) {
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_USERS, { params });
     return response.data;
   },
 
@@ -126,6 +126,26 @@ export const adminService = {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  },
+
+  async getUploadedTokens(params = {}) {
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_UPLOAD_TOKENS, { params });
+    return response.data;
+  },
+
+  async getBlockedUsers() {
+    const response = await api.get('/api/admin-blocked-users');
+    return response.data;
+  },
+
+  async unblockUser(targetUserId) {
+    const response = await api.post('/api/admin-blocked-users', { targetUserId, action: 'unblock' });
+    return response.data;
+  },
+
+  async resetUserAttempts(targetUserId) {
+    const response = await api.post('/api/admin-blocked-users', { targetUserId, action: 'reset' });
     return response.data;
   }
 };

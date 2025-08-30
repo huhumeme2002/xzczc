@@ -1,34 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { adminService } from '../../services/api';
-import { 
-  Users, 
-  Key, 
-  CreditCard, 
-  TrendingUp,
-  Shield,
-  Activity,
-  AlertTriangle,
-  Plus,
-  Upload,
-  Download,
-  Settings
-} from 'lucide-react';
+import { Users, Key, TrendingUp, Shield, AlertTriangle } from 'lucide-react';
+import AdminOverview from './tabs/AdminOverview';
+import AdminTokens from './tabs/AdminTokens';
+import AdminUsers from './tabs/AdminUsers';
+import AdminNotifications from './tabs/AdminNotifications';
+import AdminLoginCode from './tabs/AdminLoginCode';
+import AdminSecurity from './tabs/AdminSecurity';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    activeUsers: 0,
-    totalKeys: 0,
-    usedKeys: 0,
-    totalRequests: 0,
-    totalTokens: 0
-  });
-  const [users, setUsers] = useState([]);
-  const [keys, setKeys] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
@@ -89,24 +73,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleCreateKeys = async () => {
-    const count = prompt('Số lượng key cần tạo:', '5');
-    const credits = prompt('Số credits mỗi key:', '100');
-    
-    if (count && credits) {
-      try {
-        await adminService.createKeys({
-          count: parseInt(count),
-          credits: parseInt(credits),
-          description: 'Keys tạo từ admin dashboard'
-        });
-        toast.success(`Đã tạo ${count} keys thành công!`);
-        loadAdminData();
-      } catch (error) {
-        toast.error('Không thể tạo keys: ' + (error.response?.data?.error || error.message));
-      }
-    }
-  };
+  const handleCreateKeys = async () => {};
 
   const handleToggleUser = async (userId, currentStatus) => {
     try {
@@ -158,58 +125,7 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-blue-100 text-blue-600">
-              <Users className="h-6 w-6" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Tổng Users</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
-              <p className="text-xs text-green-600">{stats.activeUsers} đang hoạt động</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 text-green-600">
-              <Key className="h-6 w-6" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Keys</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalKeys}</p>
-              <p className="text-xs text-red-600">{stats.usedKeys} đã sử dụng</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-              <CreditCard className="h-6 w-6" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Tổng Credits</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalCredits.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-orange-100 text-orange-600">
-              <Activity className="h-6 w-6" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Tokens</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalTokens}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {activeTab === 'overview' && <AdminOverview />}
 
       {/* Quick Actions */}
       <div className="card mb-8">
@@ -244,8 +160,10 @@ const AdminDashboard = () => {
         <nav className="flex space-x-8">
           {[
             { id: 'overview', name: 'Tổng quan', icon: TrendingUp },
-            { id: 'users', name: 'Users', icon: Users },
-            { id: 'keys', name: 'Keys', icon: Key },
+            { id: 'tokens', name: 'Quản lý Token', icon: Key },
+            { id: 'users', name: 'Quản lý User', icon: Users },
+            { id: 'notifications', name: 'Thông báo', icon: TrendingUp },
+            { id: 'login', name: 'Mã Login', icon: TrendingUp },
             { id: 'security', name: 'Bảo mật', icon: Shield }
           ].map((tab) => (
             <button
@@ -265,219 +183,12 @@ const AdminDashboard = () => {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'users' && (
-        <div className="card">
-          <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Quản lý Users</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Requests
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trạng thái
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Hành động
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`badge ${user.role === 'admin' ? 'badge-warning' : 'badge-info'}`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.requests?.toLocaleString() || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`badge ${user.is_active ? 'badge-success' : 'badge-error'}`}>
-                        {user.is_active ? 'Hoạt động' : 'Vô hiệu'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button
-                        onClick={() => handleToggleUser(user.id, user.is_active)}
-                        className={`${user.is_active ? 'btn-danger' : 'btn-primary'} text-xs`}
-                      >
-                        {user.is_active ? 'Vô hiệu hóa' : 'Kích hoạt'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'keys' && (
-        <div className="card">
-          <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Quản lý Keys</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Key
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Requests
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Người dùng
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trạng thái
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ngày sử dụng
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {keys.map((key) => (
-                  <tr key={key.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                        {key.key_value}
-                      </code>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {key.requests}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {key.used_by || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`badge ${key.used_by ? 'badge-error' : 'badge-success'}`}>
-                        {key.used_by ? 'Đã dùng' : 'Chưa dùng'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {key.used_at ? new Date(key.used_at).toLocaleDateString('vi-VN') : '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="card">
-            <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Thống kê hệ thống</h3>
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Tỷ lệ key đã sử dụng</span>
-                <span className="text-sm font-medium">
-                  {stats.totalKeys > 0 ? Math.round((stats.usedKeys / stats.totalKeys) * 100) : 0}%
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full" 
-                  style={{ width: `${stats.totalKeys > 0 ? (stats.usedKeys / stats.totalKeys) * 100 : 0}%` }}
-                ></div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Users hoạt động</span>
-                <span className="text-sm font-medium">
-                  {stats.totalUsers > 0 ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}%
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-green-600 h-2 rounded-full" 
-                  style={{ width: `${stats.totalUsers > 0 ? (stats.activeUsers / stats.totalUsers) * 100 : 0}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Hoạt động gần đây</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center text-sm">
-                <Key className="h-4 w-4 text-green-600 mr-2" />
-                <span className="text-gray-600">Key KEY-ABC123 được redeem bởi user1</span>
-                <span className="text-gray-400 ml-auto">2 phút trước</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <CreditCard className="h-4 w-4 text-blue-600 mr-2" />
-                <span className="text-gray-600">Token mới được tạo bởi user2</span>
-                <span className="text-gray-400 ml-auto">5 phút trước</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Users className="h-4 w-4 text-purple-600 mr-2" />
-                <span className="text-gray-600">User mới đăng ký: newuser</span>
-                <span className="text-gray-400 ml-auto">10 phút trước</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'security' && (
-        <div className="card">
-          <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Bảo mật hệ thống</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium text-gray-900 mb-3">Cảnh báo bảo mật</h4>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-green-600">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Không có hoạt động đáng ngờ
-                </div>
-                <div className="flex items-center text-sm text-green-600">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Tất cả user đang hoạt động bình thường
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium text-gray-900 mb-3">Cài đặt bảo mật</h4>
-              <div className="space-y-2">
-                <button className="btn-secondary text-sm w-full">
-                  Cấu hình rate limiting
-                </button>
-                <button className="btn-secondary text-sm w-full">
-                  Quản lý IP whitelist
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {activeTab === 'overview' && <AdminOverview />}
+      {activeTab === 'tokens' && <AdminTokens />}
+      {activeTab === 'users' && <AdminUsers />}
+      {activeTab === 'notifications' && <AdminNotifications />}
+      {activeTab === 'login' && <AdminLoginCode />}
+      {activeTab === 'security' && <AdminSecurity />}
     </div>
   );
 };
