@@ -16,7 +16,7 @@ const AdminNotifications = () => {
 
     setLoading(true);
     try {
-      await notificationService.sendNotification({
+      const result = await notificationService.sendNotification({
         title,
         content,
         type,
@@ -31,7 +31,8 @@ const AdminNotifications = () => {
       setType('info');
       setRecipient('all');
     } catch (error) {
-      alert('Có lỗi xảy ra khi gửi thông báo: ' + (error.message || 'Unknown error'));
+      console.error('Notification error:', error);
+      alert('Có lỗi xảy ra khi gửi thông báo: ' + (error.message || 'Network error'));
     } finally {
       setLoading(false);
     }

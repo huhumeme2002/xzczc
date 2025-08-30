@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.REACT_APP_API_URL || 'https://backend-2f3n9w5nq-khanhs-projects-3f746af3.vercel.app',
+  BASE_URL: process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app',
   ENDPOINTS: {
     // Authentication (using database endpoints)
     LOGIN: '/api/auth/login',
@@ -10,13 +10,13 @@ export const API_CONFIG = {
     REDEEM_KEY: '/api/keys/redeem',
 
     // Token Generation
-    GENERATE_TOKEN: '/api/tokens/generate',
-    GET_TOKEN: '/api/tokens/get',
-    GET_NEXT_TOKEN: '/api/tokens/next',
+    GENERATE_TOKEN: '/api/generate-token',
+    GET_TOKEN: '/api/get-token',
+    GET_NEXT_TOKEN: '/api/get-next-token',
 
     // Login Codes
-    GENERATE_LOGIN_CODE: '/api/tokens/generate-login-code',
-    GET_DAILY_LOGIN: '/api/tokens/daily-login',
+    GENERATE_LOGIN_CODE: '/api/generate-login-code',
+    GET_DAILY_LOGIN: '/api/get-daily-login',
 
     // Admin
     ADMIN_KEYS: '/api/admin/keys',
@@ -24,19 +24,20 @@ export const API_CONFIG = {
     ADMIN_ANALYTICS: '/api/admin/analytics',
     ADMIN_UPLOAD_TOKENS: '/api/admin/upload-tokens',
     ADMIN_MANAGE_USERS: '/api/admin/manage-users',
-    ADMIN_CREATE_KEY: '/api/admin/create-key',
-    ADMIN_GENERATE_KEYS: '/api/admin/generate-keys',
-    ADMIN_BLOCKED_USERS: '/api/admin/blocked-users', // This endpoint exists but needs to be added to vercel.json
+    ADMIN_NOTIFICATIONS: '/api/admin/notifications',
+    ADMIN_CREATE_KEY: '/api/admin/create-admin',
+    ADMIN_GENERATE_KEYS: '/api/admin/keys',
+    ADMIN_BLOCKED_USERS: '/api/admin/blocked-users',
 
     // User Data (using requests-based endpoints)
-    USER_REQUESTS: '/api/keys/balance',
-    USER_TRANSACTIONS: '/api/keys/transactions',
-    USER_BALANCE: '/api/keys/balance',
+    USER_REQUESTS: '/api/user-requests',
+    USER_TRANSACTIONS: '/api/user-transactions',
+    USER_BALANCE: '/api/user-balance',
 
     // Utility
     HEALTH: '/health',
-    TEST_CONNECT: '/api/test',
-    CHECK_SCHEMA: '/api/admin/schema'
+    TEST_CONNECT: '/api/test-connect',
+    CHECK_SCHEMA: '/api/check-schema'
   }
 };
 

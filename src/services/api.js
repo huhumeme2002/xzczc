@@ -13,18 +13,18 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
-    console.log('🔗 API Request interceptor:', {
-      url: config.url,
-      method: config.method,
+    console.log('🔗 API Request:', {
+      fullUrl: config.baseURL + config.url,
+      method: config.method.toUpperCase(),
       hasToken: !!token,
-      tokenPreview: token ? token.substring(0, 20) + '...' : 'NO TOKEN'
+      headers: config.headers
     });
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log('✅ Token added to request headers');
     } else {
-      console.log('❌ No token found in localStorage');
+      console.log('⚠️ No auth token found - this might cause 401 errors');
     }
     return config;
   },
@@ -194,14 +194,13 @@ export const loginCodeService = {
 // Notification Services
 export const notificationService = {
   async sendNotification(notificationData) {
-    // For now, simulate sending notification since backend may not have this endpoint
-    console.log('Sending notification:', notificationData);
-    return { success: true, message: 'Notification sent successfully' };
+    const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_NOTIFICATIONS, notificationData);
+    return response.data;
   },
 
   async getNotifications() {
-    // For now, return empty array since backend may not have this endpoint
-    return { notifications: [] };
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_NOTIFICATIONS);
+    return response.data;
   }
 };
 

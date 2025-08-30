@@ -17,6 +17,7 @@ const AdminLoginCode = () => {
       setDate(res.date || new Date().toLocaleDateString('vi-VN'));
       setNewCode(res.code || generateRandomCode());
     } catch (error) {
+      console.error('Error loading login code:', error);
       // If backend doesn't have endpoint, generate a random code locally
       const code = generateRandomCode();
       setCurrent(code);
@@ -32,12 +33,33 @@ const AdminLoginCode = () => {
       await loginCodeService.generateLoginCode();
       await load();
     } catch (error) {
+      console.error('Error generating login code:', error);
       // If backend doesn't have endpoint, just generate a new code locally
       const newCode = generateRandomCode();
       setCurrent(newCode);
       setDate(new Date().toLocaleDateString('vi-VN'));
       setNewCode(newCode);
       alert(`Mã login mới: ${newCode}`);
+    }
+  };
+
+  const updateManualCode = async () => {
+    if (!newCode.trim()) {
+      alert('Vui lòng nhập mã login');
+      return;
+    }
+
+    try {
+      await loginCodeService.generateLoginCode({ code: newCode });
+      setCurrent(newCode);
+      setDate(new Date().toLocaleDateString('vi-VN'));
+      alert(`Mã login đã được cập nhật: ${newCode}`);
+    } catch (error) {
+      console.error('Error setting manual login code:', error);
+      // Fallback to local update
+      setCurrent(newCode);
+      setDate(new Date().toLocaleDateString('vi-VN'));
+      alert(`Mã login đã được cập nhật (local): ${newCode}`);
     }
   };
 
@@ -55,15 +77,30 @@ const AdminLoginCode = () => {
             <span className="text-sm text-gray-500">{date || ''}</span>
           </div>
         </div>
-        <div>
-          <label className="text-sm text-gray-600">Cập nhật mã login mới:</label>
-          <input className="input-field font-mono" value={newCode} onChange={e=>setNewCode(e.target.value)} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm text-gray-600">Tự động tạo mã ngẫu nhiên:</label>
+            <button className="btn-secondary w-full" onClick={update}>Tạo Mã Ngẫu Nhiên</button>
+          </div>
+          <div>
+            <label className="text-sm text-gray-600">Nhập mã login thủ công:</label>
+            <input
+              className="input-field font-mono"
+              placeholder="Nhập mã login..."
+              value={newCode}
+              onChange={e=>setNewCode(e.target.value)}
+            />
+            <button className="btn-primary w-full mt-2" onClick={updateManualCode}>Cập Nhật Mã Thủ Công</button>
+          </div>
         </div>
-        <button className="btn-primary" onClick={update}>Cập nhật</button>
+
         <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <p>Mỗi ngày admin cần cập nhật mã login mới</p>
-          <p>User chỉ có thể lấy 1 lần/ngày</p>
-          <p>Số lần lấy tối đa = số ngày còn lại của key</p>
+          <p><strong>Hướng dẫn:</strong></p>
+          <p>• Chọn "Tạo Mã Ngẫu Nhiên" để tự động tạo mã 6 ký tự</p>
+          <p>• Hoặc nhập mã thủ công và chọn "Cập Nhật Mã Thủ Công"</p>
+          <p>• User chỉ có thể lấy mã 1 lần/ngày</p>
+          <p>• Số lần lấy tối đa = số ngày còn lại của key</p>
         </div>
       </div>
     </div>
