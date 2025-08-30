@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Clock, 
   Key, 
@@ -12,7 +11,6 @@ import {
 } from 'lucide-react';
 
 const TransactionHistory = () => {
-  const { user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,9 +21,28 @@ const TransactionHistory = () => {
     loadTransactions();
   }, []);
 
+  const filterTransactions = useCallback(() => {
+    let filtered = transactions;
+
+    // Filter by type
+    if (filterType !== 'all') {
+      filtered = filtered.filter(t => t.type === filterType);
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(t => 
+        t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.type.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredTransactions(filtered);
+  }, [transactions, searchTerm, filterType]);
+
   useEffect(() => {
     filterTransactions();
-  }, [transactions, searchTerm, filterType]);
+  }, [filterTransactions]);
 
   const loadTransactions = () => {
     // Mock data - replace with real API call
@@ -77,24 +94,7 @@ const TransactionHistory = () => {
     }, 1000);
   };
 
-  const filterTransactions = () => {
-    let filtered = transactions;
 
-    // Filter by type
-    if (filterType !== 'all') {
-      filtered = filtered.filter(t => t.type === filterType);
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(t => 
-        t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.type.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredTransactions(filtered);
-  };
 
   const getTransactionIcon = (type) => {
     switch (type) {
