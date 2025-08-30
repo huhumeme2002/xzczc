@@ -31,7 +31,7 @@ const AdminOverview = () => {
           const dash = await adminService.getDashboard();
           setStats(dash?.stats || { total_users: 0, active_users: 0, total_requests: 0 });
         } catch (error) {
-          console.log('Dashboard endpoint not available, using default stats');
+          console.error('Error loading dashboard stats:', error);
           setStats({ total_users: 0, active_users: 0, total_requests: 0 });
         }
 
@@ -43,7 +43,7 @@ const AdminOverview = () => {
             total: allTokens?.pagination?.total || 0
           });
         } catch (error) {
-          console.log('Token endpoints not available, using default values');
+          console.error('Error loading token stats:', error);
           setTokenUsage({ used: 0, total: 0 });
         }
 
@@ -51,7 +51,7 @@ const AdminOverview = () => {
           const keysRes = await adminService.getKeys({ status: 'used', page: 1, limit: 1 });
           setKeysRedeemed(keysRes?.pagination?.total || 0);
         } catch (error) {
-          console.log('Keys endpoint not available, using default value');
+          console.error('Error loading keys stats:', error);
           setKeysRedeemed(0);
         }
 

@@ -21,14 +21,10 @@ const AdminTokens = () => {
       setTokens(res.tokens || []);
       setTotalPages(res.pagination?.totalPages || 1);
     } catch (error) {
-      console.log('Tokens endpoint not available, using mock data');
-      // Mock data for demonstration
-      setTokens([
-        { id: 1, token_value: 'TOK-ABC123', requests: 50, is_used: false, created_at: new Date().toISOString() },
-        { id: 2, token_value: 'TOK-DEF456', requests: 100, is_used: true, created_at: new Date().toISOString() },
-        { id: 3, token_value: 'TOK-GHI789', requests: 75, is_used: false, created_at: new Date().toISOString() }
-      ]);
+      console.error('Error loading tokens:', error);
+      setTokens([]);
       setTotalPages(1);
+      alert('Không thể tải danh sách tokens: ' + (error.message || 'Lỗi không xác định'));
     }
   }, [status, page, limit]);
 

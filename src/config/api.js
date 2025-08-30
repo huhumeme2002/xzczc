@@ -26,7 +26,7 @@ export const API_CONFIG = {
     ADMIN_MANAGE_USERS: '/api/admin/manage-users',
     ADMIN_CREATE_KEY: '/api/admin/create-key',
     ADMIN_GENERATE_KEYS: '/api/admin/generate-keys',
-    ADMIN_BLOCKED_USERS: '/api/admin/blocked-users',
+    ADMIN_BLOCKED_USERS: '/api/admin/blocked-users', // This endpoint exists but needs to be added to vercel.json
 
     // User Data (using requests-based endpoints)
     USER_REQUESTS: '/api/keys/balance',

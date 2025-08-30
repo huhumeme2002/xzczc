@@ -101,7 +101,17 @@ export const adminService = {
   },
 
   async updateUser(userId, updates) {
-    const response = await api.put(`${API_CONFIG.ENDPOINTS.ADMIN_USERS}/${userId}`, updates);
+    const response = await api.put(API_CONFIG.ENDPOINTS.ADMIN_USERS, { userId, updates });
+    return response.data;
+  },
+
+  async adjustUserRequests(userId, amount, description) {
+    const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_USERS, {
+      action: 'adjust_requests',
+      userId,
+      amount,
+      description: description || `Admin adjusted requests by ${amount}`
+    });
     return response.data;
   },
 

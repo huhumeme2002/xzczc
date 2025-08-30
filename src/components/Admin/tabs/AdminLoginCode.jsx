@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { loginCodeService } from '../../../services/api';
 
 const AdminLoginCode = () => {
@@ -6,7 +6,11 @@ const AdminLoginCode = () => {
   const [date, setDate] = useState('');
   const [newCode, setNewCode] = useState('');
 
-  const load = async () => {
+  const generateRandomCode = useCallback(() => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  }, []);
+
+  const load = useCallback(async () => {
     try {
       const res = await loginCodeService.getDailyLogin();
       setCurrent(res.code || '');
@@ -19,13 +23,9 @@ const AdminLoginCode = () => {
       setDate(new Date().toLocaleDateString('vi-VN'));
       setNewCode(code);
     }
-  };
+  }, [generateRandomCode]);
 
-  const generateRandomCode = () => {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
-  };
-
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const update = async () => {
     try {

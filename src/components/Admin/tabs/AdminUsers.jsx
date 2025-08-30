@@ -14,14 +14,10 @@ const AdminUsers = () => {
       setUsers(res.users || []);
       setTotalPages(res.pagination?.totalPages || 1);
     } catch (error) {
-      console.log('Users endpoint not available, using mock data');
-      // Mock data for demonstration
-      setUsers([
-        { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', requests: 1000, is_active: true, created_at: new Date().toISOString() },
-        { id: 2, username: 'user1', email: 'user1@example.com', role: 'user', requests: 500, is_active: true, created_at: new Date().toISOString() },
-        { id: 3, username: 'user2', email: 'user2@example.com', role: 'user', requests: 200, is_active: false, created_at: new Date().toISOString() }
-      ]);
+      console.error('Error loading users:', error);
+      setUsers([]);
       setTotalPages(1);
+      alert('Không thể tải danh sách người dùng: ' + (error.message || 'Lỗi không xác định'));
     }
   }, [search, page, limit]);
 
@@ -44,10 +40,10 @@ const AdminUsers = () => {
   };
 
   const adjustRequests = async (u) => {
-    const newRequests = prompt('Nhập số requests mới:', u.requests);
-    if (newRequests !== null && !isNaN(newRequests)) {
+    const adjustment = prompt('Nhập số requests muốn thêm/bớt (vd: 100 hoặc -50):', '0');
+    if (adjustment !== null && !isNaN(adjustment) && adjustment !== '0') {
       try {
-        await adminService.updateUser(u.id, { requests: Number(newRequests) });
+        await adminService.adjustUserRequests(u.id, Number(adjustment), `Admin adjusted ${adjustment} requests`);
         alert('Cập nhật requests thành công!');
         await loadUsers();
       } catch (error) {
