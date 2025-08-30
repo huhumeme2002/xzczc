@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.REACT_APP_API_URL || 'https://api-functions-k4m8y8057-khanhs-projects-3f746af3.vercel.app',
+  BASE_URL: process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app',
   ENDPOINTS: {
     // Authentication (using database endpoints)
     LOGIN: '/api/auth/login',
