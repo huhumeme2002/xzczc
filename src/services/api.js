@@ -51,12 +51,12 @@ api.interceptors.response.use(
 // Auth Services
 export const authService = {
   async login(credentials) {
-    const response = await api.post('/api/login', credentials);
+    const response = await api.post('/api/login-db', credentials);
     return response.data;
   },
 
   async register(userData) {
-    const response = await api.post('/api/register', userData);
+    const response = await api.post('/api/register-db', userData);
     return response.data;
   },
 
