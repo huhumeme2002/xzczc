@@ -50,6 +50,12 @@ const Header = () => {
                 >
                   Tokens
                 </Link>
+                <Link
+                  to="/history"
+                  className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Lịch sử
+                </Link>
                 {user?.role === 'admin' && (
                   <Link
                     to="/admin"
@@ -83,8 +89,13 @@ const Header = () => {
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <User className="w-4 h-4" />
                 <span>{user?.username}</span>
+                {user?.role && (
+                  <span className={`badge ${user.role === 'admin' ? 'badge-warning' : 'badge-info'} ml-1`}>
+                    {user.role}
+                  </span>
+                )}
                 {user?.credits !== undefined && (
-                  <span className="badge badge-info ml-2">
+                  <span className="badge badge-info ml-1">
                     {user.credits.toLocaleString()} credits
                   </span>
                 )}
@@ -149,6 +160,13 @@ const Header = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Tokens
+                  </Link>
+                  <Link
+                    to="/history"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Lịch sử
                   </Link>
                   {user?.role === 'admin' && (
                     <Link

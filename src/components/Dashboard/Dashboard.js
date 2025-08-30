@@ -141,11 +141,13 @@ const Dashboard = () => {
               <Activity className="h-6 w-6" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Hoạt động cuối</p>
+              <p className="text-sm font-medium text-gray-600">Hết hạn tài khoản</p>
               <p className="text-sm font-bold text-gray-900">
-                {stats.lastActivity 
-                  ? new Date(stats.lastActivity).toLocaleDateString('vi-VN')
-                  : 'Chưa có'
+                {user?.expiresAt 
+                  ? new Date(user.expiresAt).toLocaleDateString('vi-VN')
+                  : user?.last_login
+                  ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('vi-VN')
+                  : 'Vĩnh viễn'
                 }
               </p>
             </div>
