@@ -15,6 +15,7 @@ const CursorProDashboard = () => {
   const [keyInput, setKeyInput] = useState('');
   const [isRedeemingKey, setIsRedeemingKey] = useState(false);
   const [isGeneratingToken, setIsGeneratingToken] = useState(false);
+  const [recentTokens, setRecentTokens] = useState([]); // store last few tokens
   const [isGeneratingLoginCode, setIsGeneratingLoginCode] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -72,16 +73,28 @@ const CursorProDashboard = () => {
 
     setIsGeneratingToken(true);
     try {
-      const result = await tokenService.generateToken();
-      
-      // Subtract 50 requests
-      updateUser({ requests: currentRequests - 50 });
-      
-      // Show token in a modal or copy to clipboard
-      await navigator.clipboard.writeText(result.token || 'TOKEN_GENERATED_' + Date.now());
-      toast.success('Token đã được tạo và copy vào clipboard!');
+      const result = await tokenService.getNextToken();
+      const tokenValue = result.token_value || result.token || `TOK_${Date.now()}`;
+
+      // Update requests from server response if present
+      if (typeof result.new_requests === 'number') {
+        updateUser({ requests: result.new_requests });
+      } else {
+        updateUser({ requests: Math.max(0, currentRequests - 50) });
+      }
+
+      // Prepend to recent tokens (keep max 5)
+      setRecentTokens(prev => [{ token: tokenValue, description: result.description || '', time: new Date().toISOString() }, ...prev].slice(0, 5));
+
+      // Auto copy
+      try {
+        await navigator.clipboard.writeText(tokenValue);
+        toast.success('Đã lấy token và copy vào clipboard!');
+      } catch (_) {
+        toast.success('Đã lấy token! (không thể copy tự động)');
+      }
     } catch (error) {
-      toast.error('Không thể tạo token: ' + (error.response?.data?.error || error.message));
+      toast.error(error.response?.data?.error || error.message || 'Không thể lấy token');
     } finally {
       setIsGeneratingToken(false);
     }
@@ -153,6 +166,41 @@ const CursorProDashboard = () => {
                     'Lấy Token'
                   )}
                 </button>
+                {/* Recent tokens table */}
+                {recentTokens.length > 0 && (
+                  <div className="mt-6 text-left">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Token vừa lấy</h4>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                            <th className="px-3 py-2"></th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {recentTokens.map((t, idx) => (
+                            <tr key={idx}>
+                              <td className="px-3 py-2 font-mono text-sm truncate max-w-xs">{t.token}</td>
+                              <td className="px-3 py-2 text-sm text-gray-600">{t.description || '-'}</td>
+                              <td className="px-3 py-2 text-sm text-gray-600">{new Date(t.time).toLocaleString('vi-VN')}</td>
+                              <td className="px-3 py-2 text-right">
+                                <button
+                                  onClick={async () => { try { await navigator.clipboard.writeText(t.token); toast.success('Đã copy token!'); } catch(_){} }}
+                                  className="btn-secondary"
+                                >
+                                  Copy
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -133,7 +133,7 @@ export const tokenService = {
   },
 
   async getNextToken() {
-    const response = await api.get(API_CONFIG.ENDPOINTS.GET_NEXT_TOKEN);
+    const response = await api.post(API_CONFIG.ENDPOINTS.GET_NEXT_TOKEN);
     return response.data;
   }
 };
