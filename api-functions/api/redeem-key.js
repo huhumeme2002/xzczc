@@ -74,9 +74,9 @@ module.exports = async function handler(req, res) {
 
       const userUpdateResult = await client.query(
         `UPDATE users 
-         SET credits = credits + $1 
+         SET requests = requests + $1 
          WHERE id = $2 
-         RETURNING username, credits`,
+         RETURNING username, requests`,
         [keyData.requests, userId]
       );
 
@@ -87,8 +87,8 @@ module.exports = async function handler(req, res) {
       const updatedUser = userUpdateResult.rows[0];
 
       await client.query(
-        `INSERT INTO credit_transactions (user_id, amount, description) 
-         VALUES ($1, $2, $3)`,
+        `INSERT INTO request_transactions (user_id, requests_amount, description, created_at) 
+         VALUES ($1, $2, $3, NOW())`,
         [userId, keyData.requests, `Đổi key: ${keyData.key_value}`]
       );
 
@@ -97,7 +97,7 @@ module.exports = async function handler(req, res) {
       res.status(200).json({
         message: 'Đổi key thành công!',
         requests_added: keyData.requests,
-        current_requests: updatedUser.credits, // Return credits as requests for frontend compatibility
+        current_requests: updatedUser.requests,
         key_value: keyData.key_value
       });
 

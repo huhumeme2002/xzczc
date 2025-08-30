@@ -149,7 +149,7 @@ module.exports = async function handler(req, res) {
 
       // Log admin activity
       await client.query(
-        'INSERT INTO credit_transactions (user_id, amount, description) VALUES ($1, 0, $2)',
+        'INSERT INTO request_transactions (user_id, requests_amount, description, created_at) VALUES ($1, 0, $2, NOW())',
         [req.user.id, `Admin ${req.user.username} deleted ${result.rows.length} unused keys`]
       );
 
