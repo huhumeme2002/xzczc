@@ -16,7 +16,7 @@ const AdminNotifications = () => {
 
     setLoading(true);
     try {
-      const result = await notificationService.sendNotification({
+      await notificationService.sendNotification({
         title,
         content,
         type,
