@@ -116,8 +116,44 @@ export const tokenService = {
     return response.data;
   },
 
-  async redeemToken(tokenData) {
-    const response = await api.post(API_CONFIG.ENDPOINTS.REDEEM_TOKEN, tokenData);
+  async getToken() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.GET_TOKEN);
+    return response.data;
+  },
+
+  async getNextToken() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.GET_NEXT_TOKEN);
+    return response.data;
+  }
+};
+
+// Login Code Services
+export const loginCodeService = {
+  async generateLoginCode() {
+    const response = await api.post(API_CONFIG.ENDPOINTS.GENERATE_LOGIN_CODE);
+    return response.data;
+  },
+
+  async getDailyLogin() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.GET_DAILY_LOGIN);
+    return response.data;
+  }
+};
+
+// User Services
+export const userService = {
+  async getRequests() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.USER_REQUESTS);
+    return response.data;
+  },
+
+  async getTransactions() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.USER_TRANSACTIONS);
+    return response.data;
+  },
+
+  async getBalance() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.USER_BALANCE);
     return response.data;
   }
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import Layout from './components/Layout/Layout';
+import CursorProLayout from './components/Layout/CursorProLayout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 // Auth Components
@@ -10,7 +10,7 @@ import Register from './components/Auth/Register';
 
 // Main Components
 import LandingPage from './components/LandingPage/LandingPage';
-import Dashboard from './components/Dashboard/Dashboard';
+import CursorProDashboard from './components/Dashboard/CursorProDashboard';
 import KeyRedeem from './components/KeyRedeem/KeyRedeem';
 import TokenGeneration from './components/Tokens/TokenGeneration';
 import TransactionHistory from './components/History/TransactionHistory';
@@ -38,7 +38,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Layout>
+        <CursorProLayout>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
@@ -50,7 +50,7 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <CursorProDashboard />
                 </ProtectedRoute>
               }
             />
@@ -94,7 +94,7 @@ function App() {
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Layout>
+        </CursorProLayout>
       </Router>
     </AuthProvider>
   );

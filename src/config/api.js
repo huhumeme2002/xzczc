@@ -8,20 +8,31 @@ export const API_CONFIG = {
     REGISTER: '/api/auth/register',
     REGISTER_DB: '/api/register-db',
     
-    // Keys & Credits
-    REDEEM_KEY: '/api/keys/redeem',
+    // Keys & Requests
+    REDEEM_KEY: '/api/redeem-key',
+    
+    // Token Generation
+    GENERATE_TOKEN: '/api/generate-token',
+    GET_TOKEN: '/api/get-token',
+    GET_NEXT_TOKEN: '/api/get-next-token',
+    
+    // Login Codes
+    GENERATE_LOGIN_CODE: '/api/generate-login-code',
+    GET_DAILY_LOGIN: '/api/get-daily-login',
     
     // Admin
-    ADMIN_KEYS: '/api/admin/keys',
-    ADMIN_USERS: '/api/admin/users',
-    ADMIN_ANALYTICS: '/api/admin/analytics',
-    ADMIN_UPLOAD_TOKENS: '/api/admin/upload-tokens',
-    ADMIN_MANAGE_USERS: '/api/admin/manage-users',
+    ADMIN_KEYS: '/api/admin-keys',
+    ADMIN_USERS: '/api/admin-users',
+    ADMIN_ANALYTICS: '/api/admin-analytics',
+    ADMIN_UPLOAD_TOKENS: '/api/admin-upload-tokens',
+    ADMIN_MANAGE_USERS: '/api/admin-manage-users',
+    ADMIN_CREATE_KEY: '/api/admin-create-key',
+    ADMIN_GENERATE_KEYS: '/api/admin-generate-keys',
     
-    // Tokens
-    GENERATE_TOKEN: '/api/generate-token',
-    CREATE_TEST_TOKEN: '/api/create-test-token',
-    REDEEM_TOKEN: '/api/redeem-token',
+    // User Data
+    USER_REQUESTS: '/api/user-requests',
+    USER_TRANSACTIONS: '/api/user-transactions',
+    USER_BALANCE: '/api/user-balance',
     
     // Utility
     HEALTH: '/api/health',
