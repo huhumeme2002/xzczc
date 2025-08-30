@@ -1,5 +1,32 @@
 {
   "version": 2,
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-Requested-With, Accept, Origin, User-Agent, DNT, Cache-Control, X-Mx-ReqToken, Keep-Alive, X-Requested-With, If-Modified-Since, X-CSRF-Token"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/auth/register",
@@ -54,6 +81,10 @@
       "destination": "/api/admin-manage-users"
     },
     {
+      "source": "/api/admin/blocked-users",
+      "destination": "/api/admin-blocked-users"
+    },
+    {
       "source": "/api/update-schema",
       "destination": "/api/update-schema"
     },
@@ -72,6 +103,34 @@
     {
       "source": "/api/generate-token",
       "destination": "/api/generate-token"
+    },
+    {
+      "source": "/api/generate-login-code",
+      "destination": "/api/generate-login-code"
+    },
+    {
+      "source": "/api/get-daily-login",
+      "destination": "/api/generate-login-code"
+    },
+    {
+      "source": "/api/admin/notifications",
+      "destination": "/api/admin-notifications"
+    },
+    {
+      "source": "/api/user/profile",
+      "destination": "/api/user-profile"
+    },
+    {
+      "source": "/api/global-login-code",
+      "destination": "/api/global-login-code"
+    },
+    {
+      "source": "/api/user/profile",
+      "destination": "/api/user-profile"
+    },
+    {
+      "source": "/api/test-cors",
+      "destination": "/api/test-cors"
     }
   ]
 }
