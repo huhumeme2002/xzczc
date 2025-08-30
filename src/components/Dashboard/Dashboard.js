@@ -12,10 +12,10 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { utilityService } from '../../services/api';
-import toast from 'react-hot-toast';
+
 
 const Dashboard = () => {
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalCredits: user?.credits || 0,
     keysRedeemed: 0,

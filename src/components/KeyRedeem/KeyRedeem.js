@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { keyService } from '../../services/api';
-import { Key, Gift, ArrowRight, CheckCircle } from 'lucide-react';
+import { Key, Gift, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const KeyRedeem = () => {

@@ -252,13 +252,13 @@ const Register = () => {
           <div className="text-center">
             <p className="text-xs text-gray-600">
               Bằng việc đăng ký, bạn đồng ý với{' '}
-              <a href="#" className="text-primary-600 hover:text-primary-500">
+              <button type="button" className="text-primary-600 hover:text-primary-500 underline">
                 Điều khoản sử dụng
-              </a>{' '}
+              </button>{' '}
               và{' '}
-              <a href="#" className="text-primary-600 hover:text-primary-500">
+              <button type="button" className="text-primary-600 hover:text-primary-500 underline">
                 Chính sách bảo mật
-              </a>
+              </button>
             </p>
           </div>
         </form>
