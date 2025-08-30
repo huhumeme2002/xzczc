@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { adminService } from '../../../services/api';
 
 const AdminUsers = () => {
@@ -8,13 +8,13 @@ const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     const res = await adminService.getUsers({ search, page, limit });
     setUsers(res.users || []);
     setTotalPages(res.pagination?.totalPages || 1);
-  };
+  }, [search, page, limit]);
 
-  useEffect(() => { loadUsers(); }, [page]);
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
   const onSearch = async () => { setPage(1); await loadUsers(); };
 

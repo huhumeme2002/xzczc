@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { adminService } from '../../../services/api';
 
 const AdminTokens = () => {
@@ -13,15 +13,15 @@ const AdminTokens = () => {
   const [tokens, setTokens] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
-  const loadTokens = async () => {
+  const loadTokens = useCallback(async () => {
     const params = { page, limit };
     if (status === 'available' || status === 'used' || status === 'expired') params.status = status;
     const res = await adminService.getUploadedTokens(params);
     setTokens(res.tokens || []);
     setTotalPages(res.pagination?.totalPages || 1);
-  };
+  }, [status, page, limit]);
 
-  useEffect(() => { loadTokens(); }, [status, page]);
+  useEffect(() => { loadTokens(); }, [loadTokens]);
 
   const handleCreateKeys = async () => {
     await adminService.createKeys({ requests: Number(requestsPerKey), count: Number(count), expiresInDays: expiresInDays ? Number(expiresInDays) : undefined, description });
