@@ -68,9 +68,9 @@ module.exports = async function handler(req, res) {
     
     // Create admin user
     const result = await client.query(
-      `INSERT INTO users (username, email, password_hash, credits, role, is_active, created_at) 
+      `INSERT INTO users (username, email, password_hash, requests, role, is_active, created_at) 
        VALUES ($1, $2, $3, 1000, 'admin', true, NOW()) 
-       RETURNING id, username, email, credits, role, created_at`,
+       RETURNING id, username, email, requests, role, created_at`,
       [username, email, passwordHash]
     );
     
@@ -83,11 +83,15 @@ module.exports = async function handler(req, res) {
       { expiresIn: '24h' }
     );
     
-    // Log admin creation
-    await client.query(
-      'INSERT INTO credit_transactions (user_id, amount, description) VALUES ($1, 1000, $2)',
-      [admin.id, `Admin account created for ${username}`]
-    );
+    // Log admin creation (skip if table doesn't exist)
+    try {
+      await client.query(
+        'INSERT INTO request_transactions (user_id, requests_amount, description) VALUES ($1, 1000, $2)',
+        [admin.id, `Admin account created for ${username}`]
+      );
+    } catch (err) {
+      console.log('Note: request_transactions table not found, skipping transaction log');
+    }
     
     console.log('Admin user created successfully:', { id: admin.id, username });
     
@@ -97,7 +101,7 @@ module.exports = async function handler(req, res) {
         id: admin.id,
         username: admin.username,
         email: admin.email,
-        credits: admin.credits,
+        requests: admin.requests,
         role: admin.role,
         created_at: admin.created_at
       },
