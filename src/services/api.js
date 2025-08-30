@@ -67,7 +67,7 @@ export const authService = {
 // Key Services
 export const keyService = {
   async redeemKey(keyData) {
-    const response = await api.post(API_CONFIG.ENDPOINTS.REDEEM_KEY, keyData);
+    const response = await api.post('/api/keys/redeem', keyData);
     return response.data;
   }
 };

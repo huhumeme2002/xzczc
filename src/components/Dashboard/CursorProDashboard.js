@@ -35,16 +35,28 @@ const CursorProDashboard = () => {
 
     setIsRedeemingKey(true);
     try {
+      console.log('Attempting to redeem key:', keyInput);
       const result = await keyService.redeemKey({ key: keyInput });
       
-      // Update user requests instead of credits
-      const newRequests = (user?.requests || 0) + (result.requests || result.creditsAwarded || 100);
+      console.log('Key redemption result:', result);
+      
+      // Update user requests using API response data
+      const newRequests = result.current_requests || (user?.requests || 0) + (result.requests_added || result.requests || result.creditsAwarded || 100);
       updateUser({ requests: newRequests });
       
       setKeyInput('');
-      toast.success(`Đã thêm ${result.requests || result.creditsAwarded || 100} requests!`);
+      toast.success(`Key đã được redeem thành công! +${result.requests_added || result.requests || 100} requests`);
     } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Key không hợp lệ hoặc đã được sử dụng';
+      console.error('Key redemption error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message
+      });
+      
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'Key không hợp lệ hoặc đã được sử dụng';
       toast.error(errorMessage);
     } finally {
       setIsRedeemingKey(false);
