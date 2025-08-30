@@ -192,6 +192,12 @@ CREATE TABLE request_transactions (
   - `DATABASE_URL`: PostgreSQL connection string
   - `JWT_SECRET`: JWT signing secret
 
+#### **Database Access:**
+- **Provider**: Neon (https://neon.tech)
+- **Connection String**: `postgresql://neondb_owner:xxxxx@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require`
+- **Dashboard**: https://console.neon.tech
+- **phpMyAdmin Alternative**: https://neon.tech/docs/get-started-with-neon/query-with-neon-console
+
 ---
 
 ## 🔗 **Links & Deployment Status**
@@ -207,6 +213,280 @@ CREATE TABLE request_transactions (
 ### **Demo Accounts:**
 - **Admin**: `admin` / `admin123`
 - **User**: `user1` / `123456`
+
+---
+
+## 🗄️ **Database Management Guide**
+
+### **1. Neon Console Access**
+- **URL**: https://console.neon.tech
+- **Login**: Sử dụng tài khoản đã tạo
+- **Dashboard**: Xem overview, usage, và settings
+
+### **2. Connection Methods**
+
+#### **Method A: Neon SQL Editor (Recommended)**
+```
+1. Vào https://console.neon.tech
+2. Chọn project "WebCurSor"
+3. Click "SQL Editor" ở sidebar
+4. Viết và chạy SQL queries trực tiếp
+```
+
+#### **Method B: psql Command Line**
+```bash
+# Cài đặt PostgreSQL client
+# Windows: Download từ postgresql.org
+# macOS: brew install postgresql
+# Linux: sudo apt install postgresql-client
+
+# Kết nối database
+psql "postgresql://neondb_owner:[password]@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require"
+```
+
+#### **Method C: Database GUI Tools**
+- **pgAdmin**: Free PostgreSQL GUI
+- **DBeaver**: Universal database tool
+- **TablePlus**: Modern database client
+- **DataGrip**: JetBrains IDE
+
+### **3. Database Schema**
+
+#### **Users Table**
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  requests INTEGER DEFAULT 0,
+  role VARCHAR(50) DEFAULT 'user',
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  expires_at TIMESTAMP NULL
+);
+```
+
+#### **Keys Table**
+```sql
+CREATE TABLE keys (
+  id SERIAL PRIMARY KEY,
+  key_value VARCHAR(255) UNIQUE NOT NULL,
+  requests INTEGER DEFAULT 0,
+  is_used BOOLEAN DEFAULT false,
+  created_by INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### **Request Transactions Table**
+```sql
+CREATE TABLE request_transactions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  requests_amount INTEGER NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### **4. Useful SQL Queries**
+
+#### **Check All Users**
+```sql
+SELECT id, username, email, requests, role, is_active,
+       TO_CHAR(created_at, 'DD/MM/YYYY HH24:MI') as created,
+       CASE
+         WHEN expires_at IS NULL THEN 'Không giới hạn'
+         ELSE TO_CHAR(expires_at, 'DD/MM/YYYY HH24:MI')
+       END as expires
+FROM users
+ORDER BY created_at DESC;
+```
+
+#### **Check All Keys**
+```sql
+SELECT id, key_value, requests, is_used,
+       TO_CHAR(created_at, 'DD/MM/YYYY HH24:MI') as created
+FROM keys
+ORDER BY created_at DESC;
+```
+
+#### **Check Transactions**
+```sql
+SELECT t.id, u.username, t.requests_amount, t.description,
+       TO_CHAR(t.created_at, 'DD/MM/YYYY HH24:MI') as time
+FROM request_transactions t
+JOIN users u ON t.user_id = u.id
+ORDER BY t.created_at DESC
+LIMIT 50;
+```
+
+#### **System Statistics**
+```sql
+-- Total users
+SELECT COUNT(*) as total_users FROM users;
+
+-- Active users
+SELECT COUNT(*) as active_users FROM users WHERE is_active = true;
+
+-- Total requests in system
+SELECT SUM(requests) as total_requests FROM users;
+
+-- Recent activity (last 24h)
+SELECT COUNT(*) as recent_transactions
+FROM request_transactions
+WHERE created_at > NOW() - INTERVAL '24 hours';
+```
+
+### **5. Database Maintenance**
+
+#### **Backup Data**
+```sql
+-- Export users table
+\COPY users TO 'users_backup.csv' CSV HEADER;
+
+-- Export keys table
+\COPY keys TO 'keys_backup.csv' CSV HEADER;
+
+-- Export transactions
+\COPY request_transactions TO 'transactions_backup.csv' CSV HEADER;
+```
+
+#### **Reset Test Data**
+```sql
+-- Reset all user requests to 100
+UPDATE users SET requests = 100 WHERE role = 'user';
+
+-- Reset all keys to unused
+UPDATE keys SET is_used = false;
+
+-- Clear old transactions (older than 30 days)
+DELETE FROM request_transactions
+WHERE created_at < NOW() - INTERVAL '30 days';
+```
+
+#### **Performance Check**
+```sql
+-- Check table sizes
+SELECT
+  schemaname,
+  tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+
+-- Check slow queries
+SELECT query, calls, total_time, mean_time
+FROM pg_stat_statements
+ORDER BY total_time DESC
+LIMIT 10;
+```
+
+### **6. Troubleshooting Database**
+
+#### **Connection Issues**
+```bash
+# Test connection
+psql "postgresql://neondb_owner:[password]@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require" -c "SELECT version();"
+
+# Check if database is reachable
+ping ep-xxxx.us-east-1.aws.neon.tech
+```
+
+#### **Common Errors**
+- **SSL Error**: Add `?sslmode=require` to connection string
+- **Password Error**: Check Neon dashboard for correct password
+- **Timeout**: Database might be paused due to inactivity
+- **Connection Limit**: Neon free tier has connection limits
+
+#### **Debug API Database Calls**
+```javascript
+// Add to any API function for debugging
+console.log('Database query:', query);
+console.log('Parameters:', params);
+
+// Check connection
+const client = await pool.connect();
+console.log('Connected to database');
+client.release();
+```
+
+### **7. Environment Variables**
+
+#### **Local Development (.env)**
+```env
+DATABASE_URL=postgresql://neondb_owner:[password]@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+JWT_SECRET=unified-aivannang-secret-2024
+NODE_ENV=development
+```
+
+#### **Production (Vercel)**
+```env
+DATABASE_URL=postgresql://neondb_owner:[password]@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+JWT_SECRET=unified-aivannang-secret-2024
+NODE_ENV=production
+```
+
+### **8. Database Tools & Scripts**
+
+#### **Available Scripts in api-functions/**
+```
+check-schema.js      # Check database schema
+inspect-db-all.js    # Inspect all tables
+test-db-local.js     # Test local database connection
+fix-admin-password.js # Reset admin password
+```
+
+#### **Run Database Scripts**
+```bash
+cd api-functions
+node check-schema.js
+node inspect-db-all.js
+```
+
+---
+
+## 🔧 **Development Workflow**
+
+### **Local Development**
+```bash
+# Frontend
+cd new-frontend
+npm install
+npm start
+
+# Backend (using Vercel CLI)
+cd api-functions
+npm install
+vercel dev
+```
+
+### **Testing Database**
+```bash
+# Test connection
+cd api-functions
+node test-db-local.js
+
+# Check schema
+node check-schema.js
+
+# Inspect data
+node inspect-db-all.js
+```
+
+### **Deployment**
+```bash
+# Deploy frontend
+cd new-frontend
+npm run build
+vercel --prod
+
+# Deploy backend
+cd api-functions
+vercel --prod
+```
 
 ---
 
