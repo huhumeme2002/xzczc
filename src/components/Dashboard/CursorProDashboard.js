@@ -119,15 +119,19 @@ const CursorProDashboard = () => {
   const handleGenerateLoginCode = async () => {
     setIsGeneratingLoginCode(true);
     try {
-      const result = await loginCodeService.generateLoginCode();
-      const loginCode = result.code || `LOGIN_${Date.now()}`;
-      await navigator.clipboard.writeText(loginCode);
-      toast.success('Mã login đã được tạo và copy vào clipboard!');
+      // Get the global login code set by admin
+      const result = await loginCodeService.getGlobalLoginCode();
+      const loginCode = result.code;
+
+      if (loginCode) {
+        await navigator.clipboard.writeText(loginCode);
+        toast.success(`Mã login: ${loginCode} đã được copy vào clipboard!`);
+      } else {
+        toast.error('Chưa có mã login nào được thiết lập bởi admin');
+      }
     } catch (error) {
-      // Fallback to mock if API fails
-      const loginCode = `LOGIN_${Date.now()}`;
-      await navigator.clipboard.writeText(loginCode);
-      toast.success('Mã login đã được tạo và copy vào clipboard!');
+      console.error('Error getting global login code:', error);
+      toast.error('Không thể lấy mã login từ server');
     } finally {
       setIsGeneratingLoginCode(false);
     }

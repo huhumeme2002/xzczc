@@ -17,6 +17,7 @@ export const API_CONFIG = {
     // Login Codes
     GENERATE_LOGIN_CODE: '/api/generate-login-code',
     GET_DAILY_LOGIN: '/api/get-daily-login',
+    GLOBAL_LOGIN_CODE: '/api/global-login-code',
 
     // Admin
     ADMIN_KEYS: '/api/admin/keys',

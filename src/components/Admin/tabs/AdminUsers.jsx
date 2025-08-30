@@ -78,6 +78,28 @@ const AdminUsers = () => {
     }
   };
 
+  const adjustExpiryDate = async (u) => {
+    const currentExpiry = u.expires_at ? new Date(u.expires_at).toISOString().split('T')[0] : '';
+    const newExpiryDate = prompt('Nhập ngày hết hạn mới (YYYY-MM-DD):', currentExpiry);
+
+    if (newExpiryDate) {
+      try {
+        // Validate date format
+        const date = new Date(newExpiryDate);
+        if (isNaN(date.getTime())) {
+          alert('Định dạng ngày không hợp lệ. Vui lòng sử dụng định dạng YYYY-MM-DD');
+          return;
+        }
+
+        await adminService.updateUser(u.id, { expires_at: newExpiryDate });
+        alert('Cập nhật ngày hết hạn thành công!');
+        await loadUsers();
+      } catch (error) {
+        alert('Không thể cập nhật ngày hết hạn: ' + (error.message || 'Lỗi không xác định'));
+      }
+    }
+  };
+
   return (
     <div className="card">
       <div className="card-header flex items-center justify-between">
@@ -92,10 +114,11 @@ const AdminUsers = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người dùng</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requests</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requests</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hết hạn</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
               <th className="px-3 py-2" />
             </tr>
           </thead>
@@ -109,12 +132,14 @@ const AdminUsers = () => {
                 <td className="px-3 py-2 text-sm">{u.requests}</td>
                 <td className="px-3 py-2 text-sm">{u.role}</td>
                 <td className="px-3 py-2 text-sm">{u.is_active ? 'Hoạt động' : 'Vô hiệu'}</td>
+                <td className="px-3 py-2 text-sm">{u.expires_at ? new Date(u.expires_at).toLocaleDateString('vi-VN') : 'Không giới hạn'}</td>
                 <td className="px-3 py-2 text-sm">{u.created_at ? new Date(u.created_at).toLocaleTimeString('vi-VN') + ' ' + new Date(u.created_at).toLocaleDateString('vi-VN') : '-'}</td>
                 <td className="px-3 py-2 text-right space-x-2">
                   <button className="btn-secondary text-xs" onClick={()=>showUserDetails(u)}>Chi tiết</button>
                   <button className="btn-secondary text-xs" onClick={()=>adjustRequests(u)}>Requests</button>
                   <button className="btn-secondary text-xs" onClick={()=>changeRole(u)}>Vai trò</button>
                   <button className="btn-secondary text-xs" onClick={()=>changePassword(u)}>Đổi MK</button>
+                  <button className="btn-secondary text-xs" onClick={()=>adjustExpiryDate(u)}>Hết hạn</button>
                   <button className={`${u.is_active ? 'btn-danger' : 'btn-primary'} text-xs`} onClick={()=>toggleActive(u)}>{u.is_active ? 'Vô hiệu' : 'Kích hoạt'}</button>
                 </td>
               </tr>

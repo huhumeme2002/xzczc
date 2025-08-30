@@ -12,12 +12,12 @@ const AdminLoginCode = () => {
 
   const load = useCallback(async () => {
     try {
-      const res = await loginCodeService.getDailyLogin();
+      const res = await loginCodeService.getGlobalLoginCode();
       setCurrent(res.code || '');
       setDate(res.date || new Date().toLocaleDateString('vi-VN'));
       setNewCode(res.code || generateRandomCode());
     } catch (error) {
-      console.error('Error loading login code:', error);
+      console.error('Error loading global login code:', error);
       // If backend doesn't have endpoint, generate a random code locally
       const code = generateRandomCode();
       setCurrent(code);
@@ -30,16 +30,17 @@ const AdminLoginCode = () => {
 
   const update = async () => {
     try {
-      await loginCodeService.generateLoginCode();
+      const newCode = generateRandomCode();
+      await loginCodeService.setGlobalLoginCode(newCode);
       await load();
     } catch (error) {
-      console.error('Error generating login code:', error);
-      // If backend doesn't have endpoint, just generate a new code locally
+      console.error('Error setting global login code:', error);
+      // Fallback to local update
       const newCode = generateRandomCode();
       setCurrent(newCode);
       setDate(new Date().toLocaleDateString('vi-VN'));
       setNewCode(newCode);
-      alert(`Mã login mới: ${newCode}`);
+      alert(`Mã login đã được cập nhật (local): ${newCode}`);
     }
   };
 
@@ -50,12 +51,13 @@ const AdminLoginCode = () => {
     }
 
     try {
-      await loginCodeService.generateLoginCode({ code: newCode });
+      await loginCodeService.setGlobalLoginCode(newCode);
       setCurrent(newCode);
       setDate(new Date().toLocaleDateString('vi-VN'));
-      alert(`Mã login đã được cập nhật: ${newCode}`);
+      alert(`Mã login global đã được cập nhật: ${newCode}`);
+      await load(); // Reload to confirm
     } catch (error) {
-      console.error('Error setting manual login code:', error);
+      console.error('Error setting global login code:', error);
       // Fallback to local update
       setCurrent(newCode);
       setDate(new Date().toLocaleDateString('vi-VN'));

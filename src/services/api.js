@@ -180,13 +180,24 @@ export const tokenService = {
 
 // Login Code Services
 export const loginCodeService = {
-  async generateLoginCode() {
-    const response = await api.post(API_CONFIG.ENDPOINTS.GENERATE_LOGIN_CODE);
+  async generateLoginCode(code) {
+    const payload = code ? { code } : {};
+    const response = await api.post(API_CONFIG.ENDPOINTS.GENERATE_LOGIN_CODE, payload);
     return response.data;
   },
 
   async getDailyLogin() {
     const response = await api.get(API_CONFIG.ENDPOINTS.GET_DAILY_LOGIN);
+    return response.data;
+  },
+
+  async getGlobalLoginCode() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.GLOBAL_LOGIN_CODE);
+    return response.data;
+  },
+
+  async setGlobalLoginCode(code) {
+    const response = await api.post(API_CONFIG.ENDPOINTS.GLOBAL_LOGIN_CODE, { code });
     return response.data;
   }
 };
