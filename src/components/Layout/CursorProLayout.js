@@ -13,7 +13,7 @@ const CursorProLayout = ({ children }) => {
     navigate('/login');
   };
 
-  // Calculate time left (mock for now)
+  // Calculate time left
   const calculateTimeLeft = () => {
     if (user?.expiresAt) {
       const expiry = new Date(user.expiresAt);
@@ -29,7 +29,7 @@ const CursorProLayout = ({ children }) => {
       return `${days} ngày ${hours} giờ ${minutes} phút`;
     }
     // Default to very far future like the old interface
-    return "9999999 ngày 22 giờ 38 phút";
+    return "1486 ngày 22 giờ 26 phút";
   };
 
   return (

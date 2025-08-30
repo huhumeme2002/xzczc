@@ -18,27 +18,13 @@ const CursorProDashboard = () => {
   const [isGeneratingLoginCode, setIsGeneratingLoginCode] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Calculate expiry date (mock data for now)
+  // Calculate expiry date for display
   const calculateExpiry = () => {
     if (user?.expiresAt) {
       return new Date(user.expiresAt);
     }
     // Default to very far future like the old interface
     return new Date('2029-09-25T13:16:32');
-  };
-
-  const calculateTimeLeft = () => {
-    const expiry = calculateExpiry();
-    const now = new Date();
-    const diff = expiry - now;
-    
-    if (diff <= 0) return "Đã hết hạn";
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
-    return `${days} ngày ${hours} giờ ${minutes} phút`;
   };
 
   const handleKeyRedeem = async () => {
@@ -107,28 +93,7 @@ const CursorProDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Cursor Pro Thinking</h1>
-              <p className="text-sm text-gray-600">
-                ⏰ Còn lại: <span className="font-medium text-primary-600">{calculateTimeLeft()}</span>
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">Chào mừng trở lại, <strong>{user?.username}</strong></span>
-              {user?.role === 'admin' && (
-                <span className="badge badge-warning">Quản trị</span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
@@ -144,7 +109,6 @@ const CursorProDashboard = () => {
                   <div><strong>{user?.username}</strong></div>
                   <div>Đổi key để thêm requests</div>
                   <div className="mt-2">
-                    <div>Thời hạn key: <span className="text-primary-600">{calculateTimeLeft()}</span></div>
                     <div>Hết hạn: {calculateExpiry().toLocaleString('vi-VN')}</div>
                   </div>
                 </div>
@@ -426,7 +390,6 @@ const CursorProDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };
