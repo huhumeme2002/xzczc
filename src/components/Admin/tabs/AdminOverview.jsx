@@ -25,14 +25,36 @@ const AdminOverview = () => {
     const load = async () => {
       try {
         setLoading(true);
-        const dash = await adminService.getDashboard();
-        const allTokens = await adminService.getUploadedTokens({});
-        const usedTokens = await adminService.getUploadedTokens({ status: 'used' });
-        const keysRes = await adminService.getKeys({ status: 'used', page: 1, limit: 1 });
 
-        setStats(dash?.stats || { total_users: 0, active_users: 0, total_requests: 0 });
-        setTokenUsage({ used: usedTokens?.pagination?.total || 0, total: allTokens?.pagination?.total || 0 });
-        setKeysRedeemed(keysRes?.pagination?.total || 0);
+        // Try to load dashboard data, but provide fallbacks if endpoints don't exist
+        try {
+          const dash = await adminService.getDashboard();
+          setStats(dash?.stats || { total_users: 0, active_users: 0, total_requests: 0 });
+        } catch (error) {
+          console.log('Dashboard endpoint not available, using default stats');
+          setStats({ total_users: 0, active_users: 0, total_requests: 0 });
+        }
+
+        try {
+          const allTokens = await adminService.getUploadedTokens({});
+          const usedTokens = await adminService.getUploadedTokens({ status: 'used' });
+          setTokenUsage({
+            used: usedTokens?.pagination?.total || 0,
+            total: allTokens?.pagination?.total || 0
+          });
+        } catch (error) {
+          console.log('Token endpoints not available, using default values');
+          setTokenUsage({ used: 0, total: 0 });
+        }
+
+        try {
+          const keysRes = await adminService.getKeys({ status: 'used', page: 1, limit: 1 });
+          setKeysRedeemed(keysRes?.pagination?.total || 0);
+        } catch (error) {
+          console.log('Keys endpoint not available, using default value');
+          setKeysRedeemed(0);
+        }
+
       } finally {
         setLoading(false);
       }

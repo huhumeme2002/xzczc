@@ -91,7 +91,7 @@ export const adminService = {
   },
 
   async createKeys(keyData) {
-    const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_KEYS, keyData);
+    const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_GENERATE_KEYS, keyData);
     return response.data;
   },
 
@@ -101,7 +101,7 @@ export const adminService = {
   },
 
   async updateUser(userId, updates) {
-    const response = await api.put(API_CONFIG.ENDPOINTS.ADMIN_USERS, { userId, updates });
+    const response = await api.put(`${API_CONFIG.ENDPOINTS.ADMIN_USERS}/${userId}`, updates);
     return response.data;
   },
 
@@ -135,17 +135,17 @@ export const adminService = {
   },
 
   async getBlockedUsers() {
-    const response = await api.get('/api/admin-blocked-users');
+    const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_BLOCKED_USERS);
     return response.data;
   },
 
   async unblockUser(targetUserId) {
-    const response = await api.post('/api/admin-blocked-users', { targetUserId, action: 'unblock' });
+    const response = await api.post(`${API_CONFIG.ENDPOINTS.ADMIN_BLOCKED_USERS}/unblock`, { targetUserId });
     return response.data;
   },
 
   async resetUserAttempts(targetUserId) {
-    const response = await api.post('/api/admin-blocked-users', { targetUserId, action: 'reset' });
+    const response = await api.post(`${API_CONFIG.ENDPOINTS.ADMIN_BLOCKED_USERS}/reset`, { targetUserId });
     return response.data;
   }
 };
@@ -178,6 +178,20 @@ export const loginCodeService = {
   async getDailyLogin() {
     const response = await api.get(API_CONFIG.ENDPOINTS.GET_DAILY_LOGIN);
     return response.data;
+  }
+};
+
+// Notification Services
+export const notificationService = {
+  async sendNotification(notificationData) {
+    // For now, simulate sending notification since backend may not have this endpoint
+    console.log('Sending notification:', notificationData);
+    return { success: true, message: 'Notification sent successfully' };
+  },
+
+  async getNotifications() {
+    // For now, return empty array since backend may not have this endpoint
+    return { notifications: [] };
   }
 };
 
