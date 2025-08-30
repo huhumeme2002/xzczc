@@ -38,11 +38,11 @@ const CursorProDashboard = () => {
 
   // Calculate expiry date for display
   const calculateExpiry = () => {
-    if (user?.expiresAt) {
-      return new Date(user.expiresAt);
+    if (user?.expires_at) {
+      return new Date(user.expires_at);
     }
-    // Default to very far future like the old interface
-    return new Date('2029-09-25T13:16:32');
+    // If no expiry date, show "Không giới hạn" instead of hard-coded date
+    return null;
   };
 
   const handleKeyRedeem = async () => {
@@ -186,7 +186,7 @@ const CursorProDashboard = () => {
                   <div><strong>{user?.username}</strong></div>
                   <div>Đổi key để thêm requests</div>
                   <div className="mt-2">
-                    <div>Hết hạn: {calculateExpiry().toLocaleString('vi-VN')}</div>
+                    <div>Hết hạn: {calculateExpiry() ? calculateExpiry().toLocaleString('vi-VN') : 'Không giới hạn'}</div>
                   </div>
                 </div>
               </div>
