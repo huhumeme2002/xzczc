@@ -13,24 +13,7 @@ const CursorProLayout = ({ children }) => {
     navigate('/login');
   };
 
-  // Calculate time left
-  const calculateTimeLeft = () => {
-    if (user?.expiresAt) {
-      const expiry = new Date(user.expiresAt);
-      const now = new Date();
-      const diff = expiry - now;
-      
-      if (diff <= 0) return "Đã hết hạn";
-      
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      
-      return `${days} ngày ${hours} giờ ${minutes} phút`;
-    }
-    // Default to very far future like the old interface
-    return "1486 ngày 22 giờ 26 phút";
-  };
+  // Removed timer display per request
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,9 +26,7 @@ const CursorProLayout = ({ children }) => {
                 <Link to="/dashboard">
                   <h1 className="text-2xl font-bold text-gray-900">Cursor Pro Thinking</h1>
                 </Link>
-                <p className="text-sm text-gray-600">
-                  ⏰ Còn lại: <span className="font-medium text-primary-600">{calculateTimeLeft()}</span>
-                </p>
+                {/* Timer removed as requested */}
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">

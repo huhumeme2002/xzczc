@@ -175,7 +175,6 @@ const CursorProDashboard = () => {
                         <thead className="bg-gray-50">
                           <tr>
                             <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
-                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
                             <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
                             <th className="px-3 py-2"></th>
                           </tr>
@@ -184,7 +183,6 @@ const CursorProDashboard = () => {
                           {recentTokens.map((t, idx) => (
                             <tr key={idx}>
                               <td className="px-3 py-2 font-mono text-sm truncate max-w-xs">{t.token}</td>
-                              <td className="px-3 py-2 text-sm text-gray-600">{t.description || '-'}</td>
                               <td className="px-3 py-2 text-sm text-gray-600">{new Date(t.time).toLocaleString('vi-VN')}</td>
                               <td className="px-3 py-2 text-right">
                                 <button
