@@ -121,18 +121,26 @@ export const AuthProvider = ({ children }) => {
 
       console.log('🔄 Refreshing user data...');
 
-      // Instead of calling the broken profile endpoint,
-      // just update the timestamp to trigger re-render
-      // The actual data will be synced on next action (login, redeem, etc)
-      const refreshedUser = {
-        ...user,
-        lastRefreshed: new Date().toISOString()
-      };
+      // Use the simple check-balance endpoint to get fresh data
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app'}/api/check-balance`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-      updateUser(refreshedUser);
-      console.log('✅ User interface refreshed');
+      if (!response.ok) {
+        throw new Error('Failed to fetch balance');
+      }
+
+      const data = await response.json();
       
-      // The actual fresh data will be fetched on next server action
+      if (data.success && data.user) {
+        updateUser(data.user);
+        console.log('✅ User data refreshed:', data.user.requests, 'requests');
+      }
+      
       return true;
     } catch (error) {
       console.error('❌ Failed to refresh user data:', error);
