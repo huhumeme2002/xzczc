@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
-  Clock, 
-  Key, 
-  Code, 
-  Download,
   Shield,
   Zap,
-  Star,
-  Crown,
   Rocket,
   Gem,
-  Activity,
-  History,
-  HelpCircle
+  History
 } from 'lucide-react';
 import { tokenService, keyService, loginCodeService } from '../../services/api';
 import toast from 'react-hot-toast';
