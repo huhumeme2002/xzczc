@@ -120,9 +120,9 @@ const CursorProDashboard = () => {
   const handleGenerateLoginCode = async () => {
     setIsGeneratingLoginCode(true);
     try {
-      // Get the global login code set by admin
-      const result = await loginCodeService.getGlobalLoginCode();
-      const loginCode = result.code;
+      // Temporarily use a fixed code due to CORS issues
+      // Will be fixed when backend deployment is updated
+      const loginCode = 'CURSOR2024';
 
       if (loginCode) {
         await navigator.clipboard.writeText(loginCode);
@@ -131,8 +131,8 @@ const CursorProDashboard = () => {
         toast.error('Chưa có mã login nào được thiết lập bởi admin');
       }
     } catch (error) {
-      console.error('Error getting global login code:', error);
-      toast.error('Không thể lấy mã login từ server');
+      console.error('Error getting login code:', error);
+      toast.error('Không thể lấy mã login');
     } finally {
       setIsGeneratingLoginCode(false);
     }

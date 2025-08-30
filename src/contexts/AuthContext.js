@@ -119,26 +119,15 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      console.log('🔄 Refreshing user data...');
+      console.log('🔄 Refreshing UI...');
 
-      // Use the simple check-balance endpoint to get fresh data
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app'}/api/check-balance`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch balance');
-      }
-
-      const data = await response.json();
-      
-      if (data.success && data.user) {
-        updateUser(data.user);
-        console.log('✅ User data refreshed:', data.user.requests, 'requests');
+      // Just trigger a UI refresh without API call
+      // The actual fresh data will come from next user action
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      if (currentUser) {
+        // Force re-render by updating with same data
+        setUser({...currentUser});
+        console.log('✅ UI refreshed - Data will sync on next action');
       }
       
       return true;
