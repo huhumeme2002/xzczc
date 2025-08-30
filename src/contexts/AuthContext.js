@@ -110,7 +110,14 @@ export const AuthProvider = ({ children }) => {
   const refreshUserData = async () => {
     try {
       const token = authService.getToken();
-      if (!token || !user) return false;
+      if (!token) {
+        console.error('❌ No auth token found');
+        return false;
+      }
+      if (!user) {
+        console.log('⚠️ No user data available to refresh');
+        return false;
+      }
 
       console.log('🔄 Refreshing user data from server...');
 
@@ -120,11 +127,32 @@ export const AuthProvider = ({ children }) => {
       const response = await userService.getProfile();
       const freshUserData = response.user;
 
+      if (!freshUserData) {
+        console.error('❌ No user data received from server');
+        return false;
+      }
+
       updateUser(freshUserData);
       console.log('✅ User data refreshed successfully:', freshUserData.requests, 'requests');
       return true;
     } catch (error) {
       console.error('❌ Failed to refresh user data:', error);
+
+      // Provide more specific error messages
+      if (error.response) {
+        if (error.response.status === 401) {
+          console.error('❌ Authentication error - token may be expired');
+        } else if (error.response.status === 404) {
+          console.error('❌ User not found in database');
+        } else {
+          console.error('❌ Server error:', error.response.status, error.response.data);
+        }
+      } else if (error.request) {
+        console.error('❌ Network error - cannot reach server');
+      } else {
+        console.error('❌ Request setup error:', error.message);
+      }
+
       return false;
     }
   };

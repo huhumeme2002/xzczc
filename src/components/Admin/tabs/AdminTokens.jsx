@@ -12,6 +12,7 @@ const AdminTokens = () => {
   const [limit] = useState(20);
   const [tokens, setTokens] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [createdKeys, setCreatedKeys] = useState([]);
 
   const loadTokens = useCallback(async () => {
     try {
@@ -32,8 +33,21 @@ const AdminTokens = () => {
 
   const handleCreateKeys = async () => {
     try {
-      await adminService.createKeys({ requests: Number(requestsPerKey), count: Number(count), expiresInDays: expiresInDays ? Number(expiresInDays) : undefined, description });
-      alert('Tạo keys thành công!');
+      const result = await adminService.createKeys({
+        requests: Number(requestsPerKey),
+        count: Number(count),
+        expiresInDays: expiresInDays ? Number(expiresInDays) : undefined,
+        description
+      });
+
+      // Store the created keys for display
+      if (result.keys && result.keys.length > 0) {
+        setCreatedKeys(result.keys);
+        alert(`Tạo thành công ${result.keys.length} keys!`);
+      } else {
+        alert('Tạo keys thành công!');
+      }
+
       await loadTokens();
     } catch (error) {
       alert('Không thể tạo keys: ' + (error.message || 'Lỗi không xác định'));
@@ -55,6 +69,29 @@ const AdminTokens = () => {
     } catch (error) {
       alert('Không thể upload tokens: ' + (error.message || 'Lỗi không xác định'));
     }
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Đã copy vào clipboard!');
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Đã copy vào clipboard!');
+    }
+  };
+
+  const copyAllKeys = async () => {
+    if (createdKeys.length === 0) return;
+
+    const allKeysText = createdKeys.map(key => key.key_value).join('\n');
+    await copyToClipboard(allKeysText);
   };
 
   return (
@@ -102,6 +139,52 @@ const AdminTokens = () => {
           </div>
         </div>
       </div>
+
+      {/* Created Keys Display */}
+      {createdKeys.length > 0 && (
+        <div className="card">
+          <div className="card-header flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">Keys vừa tạo ({createdKeys.length})</h3>
+            <div className="space-x-2">
+              <button
+                onClick={copyAllKeys}
+                className="btn-secondary text-sm"
+              >
+                Copy tất cả
+              </button>
+              <button
+                onClick={() => setCreatedKeys([])}
+                className="btn-secondary text-sm"
+              >
+                Ẩn
+              </button>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {createdKeys.map((key, index) => (
+                <div key={index} className="border border-gray-200 rounded p-3 bg-gray-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Key {index + 1}:</span>
+                    <button
+                      onClick={() => copyToClipboard(key.key_value)}
+                      className="text-xs text-primary-600 hover:text-primary-800 underline"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <code className="text-sm bg-white px-2 py-1 rounded border font-mono break-all">
+                    {key.key_value}
+                  </code>
+                  <div className="mt-2 text-xs text-gray-600">
+                    {key.requests} requests
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-header flex items-center justify-between">
