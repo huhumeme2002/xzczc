@@ -48,7 +48,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Invalid response format');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Đăng nhập thất bại';
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
+      const errorMessage = error.response?.data?.error || error.message || 'Đăng nhập thất bại';
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -72,7 +74,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Invalid response format');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Đăng ký thất bại';
+      console.error('Registration error:', error);
+      console.error('Error response:', error.response);
+      const errorMessage = error.response?.data?.error || error.message || 'Đăng ký thất bại';
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

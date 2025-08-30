@@ -138,14 +138,7 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Demo Credentials */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-blue-900 mb-2">Tài khoản demo:</h4>
-            <div className="text-xs text-blue-700 space-y-1">
-              <div>Admin: <code className="bg-blue-100 px-1 rounded">admin / admin123</code></div>
-              <div>User: <code className="bg-blue-100 px-1 rounded">user / user123</code></div>
-            </div>
-          </div>
+
         </form>
       </div>
     </div>
