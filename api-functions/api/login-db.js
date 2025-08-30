@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
         id: user.id,
         username: user.username,
         email: user.email,
-        requests: user.requests,
+        requests: user.credits, // Use credits column but return as requests for frontend compatibility
         role: user.role
       },
       token
