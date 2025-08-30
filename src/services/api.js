@@ -206,6 +206,11 @@ export const notificationService = {
 
 // User Services
 export const userService = {
+  async getProfile() {
+    const response = await api.get(API_CONFIG.ENDPOINTS.USER_PROFILE);
+    return response.data;
+  },
+
   async getRequests() {
     const response = await api.get(API_CONFIG.ENDPOINTS.USER_REQUESTS);
     return response.data;

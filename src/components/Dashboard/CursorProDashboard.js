@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
+import {
   Shield,
   Zap,
   Rocket,
   Gem,
-  History
+  History,
+  RefreshCw
 } from 'lucide-react';
 import { tokenService, keyService, loginCodeService } from '../../services/api';
 import toast from 'react-hot-toast';
 
 const CursorProDashboard = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, refreshUserData } = useAuth();
   const [keyInput, setKeyInput] = useState('');
   const [isRedeemingKey, setIsRedeemingKey] = useState(false);
   const [isGeneratingToken, setIsGeneratingToken] = useState(false);
   const [recentTokens, setRecentTokens] = useState([]); // store last few tokens
   const [isGeneratingLoginCode, setIsGeneratingLoginCode] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Auto-refresh user data on component mount
+  useEffect(() => {
+    const autoRefresh = async () => {
+      if (user) {
+        try {
+          await refreshUserData();
+        } catch (error) {
+          console.log('Auto refresh failed, using cached data');
+        }
+      }
+    };
+    autoRefresh();
+  }, []); // Only run once on mount
 
   // Calculate expiry date for display
   const calculateExpiry = () => {
@@ -117,6 +133,23 @@ const CursorProDashboard = () => {
     }
   };
 
+  const handleRefreshData = async () => {
+    setIsRefreshing(true);
+    try {
+      const success = await refreshUserData();
+      if (success) {
+        toast.success('Đã cập nhật dữ liệu mới nhất!');
+      } else {
+        toast.error('Không thể cập nhật dữ liệu');
+      }
+    } catch (error) {
+      console.error('Refresh error:', error);
+      toast.error('Lỗi khi cập nhật dữ liệu');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -125,7 +158,21 @@ const CursorProDashboard = () => {
             {/* Current Balance */}
             <div className="card">
               <div className="text-center py-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">Số dư hiện tại</h2>
+                <div className="flex items-center justify-center mb-2">
+                  <h2 className="text-lg font-semibold text-gray-900 mr-2">Số dư hiện tại</h2>
+                  <button
+                    onClick={handleRefreshData}
+                    disabled={isRefreshing}
+                    className={`transition-colors ${
+                      isRefreshing
+                        ? 'text-primary-600 animate-spin'
+                        : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                    title="Cập nhật dữ liệu mới nhất"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </button>
+                </div>
                 <div className="text-4xl font-bold text-primary-600 mb-2">
                   {user?.requests || user?.credits || 0}
                 </div>

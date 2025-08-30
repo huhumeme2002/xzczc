@@ -107,6 +107,28 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
+  const refreshUserData = async () => {
+    try {
+      const token = authService.getToken();
+      if (!token || !user) return false;
+
+      console.log('🔄 Refreshing user data from server...');
+
+      // Import userService here to avoid circular dependency
+      const { userService } = await import('../services/api');
+
+      const response = await userService.getProfile();
+      const freshUserData = response.user;
+
+      updateUser(freshUserData);
+      console.log('✅ User data refreshed successfully:', freshUserData.requests, 'requests');
+      return true;
+    } catch (error) {
+      console.error('❌ Failed to refresh user data:', error);
+      return false;
+    }
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -115,6 +137,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
+    refreshUserData,
   };
 
   return (
