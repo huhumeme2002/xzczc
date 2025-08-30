@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   Shield,
@@ -22,18 +22,19 @@ const CursorProDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Auto-refresh user data on component mount
-  useEffect(() => {
-    const autoRefresh = async () => {
-      if (user) {
-        try {
-          await refreshUserData();
-        } catch (error) {
-          console.log('Auto refresh failed, using cached data');
-        }
+  const autoRefresh = useCallback(async () => {
+    if (user) {
+      try {
+        await refreshUserData();
+      } catch (error) {
+        console.log('Auto refresh failed, using cached data');
       }
-    };
+    }
+  }, [user, refreshUserData]);
+
+  useEffect(() => {
     autoRefresh();
-  }, []); // Only run once on mount
+  }, [autoRefresh]);
 
   // Calculate expiry date for display
   const calculateExpiry = () => {
