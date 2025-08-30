@@ -35,21 +35,31 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true);
+      console.log('🔐 Attempting login with:', { username: credentials.username });
       const response = await authService.login(credentials);
+      console.log('🔐 Login response received:', response);
       
       if (response.token && response.user) {
+        console.log('💾 Saving token to localStorage:', response.token.substring(0, 20) + '...');
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         setUser(response.user);
         setIsAuthenticated(true);
+        
+        // Verify token was saved
+        const savedToken = localStorage.getItem('authToken');
+        console.log('✅ Token verification - saved successfully:', !!savedToken);
+        console.log('✅ User saved:', response.user.username);
+        
         toast.success(`Chào mừng ${response.user.username}!`);
         return { success: true, user: response.user };
       } else {
+        console.error('❌ Invalid response format:', response);
         throw new Error('Invalid response format');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      console.error('Error response:', error.response);
+      console.error('❌ Login error:', error);
+      console.error('❌ Error response:', error.response);
       const errorMessage = error.response?.data?.error || error.message || 'Đăng nhập thất bại';
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
