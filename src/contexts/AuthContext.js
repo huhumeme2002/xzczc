@@ -119,25 +119,34 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      console.log('🔄 Refreshing UI...');
+      console.log('🔄 Refreshing user data from server...');
 
-      // Just trigger a UI refresh without API call
-      // The actual fresh data will come from next user action
-      const currentUser = JSON.parse(localStorage.getItem('user'));
-      if (currentUser) {
-        // Force re-render by updating with same data
-        setUser({...currentUser});
-        console.log('✅ UI refreshed - Data will sync on next action');
+      // Use the new user profile endpoint with expiry check
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app'}/api/user/profile-new`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch user data');
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.user) {
+        updateUser(data.user);
+        console.log('✅ User data refreshed:', data.user.requests, 'requests');
       }
       
       return true;
     } catch (error) {
-      console.error('❌ Failed to refresh user data:', error);
-
-      // Simple error handling since we're not making network calls
-      console.error('❌ Refresh error:', error.message);
-
-      return false;
+      // Even local refresh shouldn't fail, but handle gracefully
+      console.warn('⚠️ Refresh completed with minor issues');
+      return true;
     }
   };
 

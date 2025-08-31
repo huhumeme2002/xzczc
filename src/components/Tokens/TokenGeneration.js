@@ -11,8 +11,8 @@ const TokenGeneration = () => {
   const { user, updateUser } = useAuth();
 
   const handleGenerateToken = async () => {
-    if (user?.credits < tokenCost) {
-      toast.error('Không đủ credits để tạo token');
+    if (user?.requests < tokenCost) {
+      toast.error('Không đủ requests để lấy token');
       return;
     }
 
@@ -28,14 +28,22 @@ const TokenGeneration = () => {
         id: result.id || Date.now()
       });
 
-      // Update user credits
-      const newCredits = (user?.credits || 0) - tokenCost;
-      updateUser({ credits: newCredits });
+      // Update user requests
+      const newRequests = (user?.requests || 0) - tokenCost;
+      updateUser({ requests: newRequests });
 
-      toast.success('Token đã được tạo thành công!');
+      toast.success('Token đã được lấy thành công!');
     } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Không thể tạo token';
-      toast.error(errorMessage);
+      const errorMessage = error.response?.data?.error || 'Không thể lấy token';
+      
+      // Handle specific expiry errors
+      if (errorMessage.includes('chưa redeem key')) {
+        toast.error('Bạn chưa redeem key nào. Hãy redeem key trước!');
+      } else if (errorMessage.includes('hết hạn')) {
+        toast.error('Tài khoản đã hết hạn. Liên hệ admin để gia hạn.');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +68,7 @@ const TokenGeneration = () => {
     }
   };
 
-  const canGenerateToken = user?.credits >= tokenCost;
+  const canGenerateToken = user?.requests >= tokenCost;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

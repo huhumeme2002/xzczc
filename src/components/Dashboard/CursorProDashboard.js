@@ -120,9 +120,9 @@ const CursorProDashboard = () => {
   const handleGenerateLoginCode = async () => {
     setIsGeneratingLoginCode(true);
     try {
-      // Temporarily use a fixed code due to CORS issues
-      // Will be fixed when backend deployment is updated
-      const loginCode = 'CURSOR2024';
+      // Use new global login code endpoint with expiry check
+      const result = await loginCodeService.getGlobalLoginCode();
+      const loginCode = result.code;
 
       if (loginCode) {
         await navigator.clipboard.writeText(loginCode);
@@ -132,7 +132,13 @@ const CursorProDashboard = () => {
       }
     } catch (error) {
       console.error('Error getting login code:', error);
-      toast.error('Không thể lấy mã login');
+      if (error.message.includes('chưa redeem key')) {
+        toast.error('Bạn chưa redeem key nào. Hãy redeem key trước!');
+      } else if (error.message.includes('hết hạn')) {
+        toast.error('Tài khoản đã hết hạn. Liên hệ admin để gia hạn.');
+      } else {
+        toast.error('Không thể lấy mã login từ server');
+      }
     } finally {
       setIsGeneratingLoginCode(false);
     }
