@@ -120,6 +120,16 @@ export const adminService = {
     return response.data;
   },
 
+  async adjustUserExpiry(targetUserId, requests, expiryDays, action) {
+    const response = await api.post(API_CONFIG.ENDPOINTS.ADMIN_MANAGE_USER_EXPIRY, {
+      targetUserId,
+      requests,
+      expiryDays,
+      action
+    });
+    return response.data;
+  },
+
   async getAnalytics() {
     const response = await api.get(API_CONFIG.ENDPOINTS.ADMIN_ANALYTICS);
     return response.data;
