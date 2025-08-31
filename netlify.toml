@@ -1,20 +1,3 @@
-[build]
-  command = "npm ci && npm run build"
-  publish = "build"
-
-[build.environment]
-  # Change this to your Render/Vercel backend later if needed
-  REACT_APP_API_URL = "https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/api/:splat"
-  status = 200
-
-# SPA fallback for React Router
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+## Intentionally empty - root netlify.toml controls build
 
 
