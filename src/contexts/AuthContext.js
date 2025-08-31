@@ -41,10 +41,19 @@ export const AuthProvider = ({ children }) => {
       
       if (response.token && response.user) {
         console.log('💾 Saving token to localStorage:', response.token.substring(0, 20) + '...');
+        
+        // Ensure user has requests field
+        const userWithRequests = {
+          ...response.user,
+          requests: response.user.requests || response.user.credits || 0
+        };
+        
         localStorage.setItem('authToken', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(userWithRequests));
+        setUser(userWithRequests);
         setIsAuthenticated(true);
+        
+        console.log('✅ User data saved with requests:', userWithRequests.requests);
         
         // Verify token was saved
         const savedToken = localStorage.getItem('authToken');

@@ -94,9 +94,9 @@ const Header = () => {
                     {user.role}
                   </span>
                 )}
-                {user?.credits !== undefined && (
+                {user?.requests !== undefined && (
                   <span className="badge badge-info ml-1">
-                    {user.credits.toLocaleString()} credits
+                    {user.requests.toLocaleString()} requests
                   </span>
                 )}
               </div>
@@ -136,7 +136,7 @@ const Header = () => {
                     <span>{user?.username}</span>
                     {user?.credits !== undefined && (
                       <span className="badge badge-info ml-auto">
-                        {user.credits.toLocaleString()}
+                        {user.requests.toLocaleString()}
                       </span>
                     )}
                   </div>

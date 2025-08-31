@@ -30,14 +30,14 @@ const KeyRedeem = () => {
         message: result.message || 'Key đã được redeem thành công!'
       });
 
-      // Update user credits
-      if (result.user && result.user.credits !== undefined) {
-        updateUser({ credits: result.user.credits });
+      // Update user requests
+      if (result.user && result.user.requests !== undefined) {
+        updateUser({ requests: result.user.requests });
       } else {
-        // Estimate new credits if not provided
-        const currentCredits = user?.credits || 0;
-        const newCredits = currentCredits + (result.credits || result.creditsAwarded || 100);
-        updateUser({ credits: newCredits });
+        // Estimate new requests if not provided
+        const currentRequests = user?.requests || 0;
+        const newRequests = currentRequests + (result.requests || result.requestsAwarded || 100);
+        updateUser({ requests: newRequests });
       }
 
       setKeyValue('');
@@ -156,7 +156,7 @@ const KeyRedeem = () => {
             </div>
             <div className="text-center py-6">
               <div className="text-3xl font-bold text-primary-600 mb-2">
-                {user?.credits?.toLocaleString() || '0'}
+                {user?.requests?.toLocaleString() || '0'}
               </div>
               <p className="text-sm text-gray-600">Credits</p>
             </div>

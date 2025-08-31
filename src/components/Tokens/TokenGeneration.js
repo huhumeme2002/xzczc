@@ -100,7 +100,7 @@ const TokenGeneration = () => {
                   <span className="text-sm font-medium text-gray-700">Số dư hiện tại:</span>
                 </div>
                 <span className="text-lg font-bold text-primary-600">
-                  {user?.credits?.toLocaleString() || '0'} credits
+                  {user?.requests?.toLocaleString() || '0'} requests
                 </span>
               </div>
             </div>
