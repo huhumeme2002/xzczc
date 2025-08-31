@@ -65,18 +65,6 @@ const AdminUsers = () => {
     }
   };
 
-  const changePassword = async (u) => {
-    const newPassword = prompt('Nhập mật khẩu mới:');
-    if (newPassword) {
-      try {
-        await adminService.updateUser(u.id, { password: newPassword });
-        alert('Đổi mật khẩu thành công!');
-        await loadUsers();
-      } catch (error) {
-        alert('Không thể đổi mật khẩu: ' + (error.message || 'Lỗi không xác định'));
-      }
-    }
-  };
 
   const adjustExpiryDate = async (u) => {
     const expiryDays = prompt('Nhập số ngày gia hạn (vd: 30 cho 30 ngày):', '30');
