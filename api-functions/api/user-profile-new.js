@@ -10,20 +10,14 @@ const pool = new Pool({
 });
 
 module.exports = async function handler(req, res) {
-  // Comprehensive CORS headers for Vercel
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, User-Agent, DNT, Cache-Control, X-Mx-ReqToken, Keep-Alive, X-Requested-With, If-Modified-Since, X-CSRF-Token');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Max-Age', '86400');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
-    res.status(200).json({
-      message: 'CORS preflight successful',
-      methods: 'GET, POST, PUT, DELETE, OPTIONS',
-      headers: 'Content-Type, Authorization, X-Requested-With'
-    });
+    res.status(200).end();
     return;
   }
 
@@ -32,7 +26,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // Verify JWT token
+  // Get token
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'No token provided' });
@@ -50,22 +44,19 @@ module.exports = async function handler(req, res) {
   try {
     client = await pool.connect();
 
-    // Get fresh user data from database
+    // Get user with expiry check
     const result = await client.query(`
-      SELECT
-        u.id,
-        u.username,
-        u.email,
-        u.requests,
-        u.role,
-        u.is_active,
-        u.created_at,
-        u.expiry_time,
-        COUNT(rt.id) as transaction_count
-      FROM users u
-      LEFT JOIN request_transactions rt ON u.id = rt.user_id
-      WHERE u.id = $1
-      GROUP BY u.id, u.username, u.email, u.requests, u.role, u.is_active, u.created_at, u.expiry_time
+      SELECT 
+        id, username, email, requests, role, is_active,
+        expiry_time,
+        CASE 
+          WHEN expiry_time IS NULL THEN true
+          WHEN expiry_time > NOW() THEN false 
+          ELSE true 
+        END as is_expired,
+        created_at
+      FROM users 
+      WHERE id = $1
     `, [userId]);
 
     if (result.rows.length === 0) {
@@ -74,7 +65,16 @@ module.exports = async function handler(req, res) {
 
     const user = result.rows[0];
 
+    // Auto-update is_expired column if needed
+    if (user.is_expired) {
+      await client.query(
+        'UPDATE users SET is_expired = true WHERE id = $1',
+        [userId]
+      );
+    }
+
     res.status(200).json({
+      success: true,
       user: {
         id: user.id,
         username: user.username,
@@ -82,21 +82,17 @@ module.exports = async function handler(req, res) {
         requests: user.requests,
         role: user.role,
         is_active: user.is_active,
-        created_at: user.created_at,
         expiry_time: user.expiry_time,
-        transaction_count: parseInt(user.transaction_count) || 0
+        is_expired: user.is_expired,
+        created_at: user.created_at
       }
     });
 
   } catch (error) {
     console.error('User profile error:', error);
-    // Ensure CORS headers are set even on error
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.status(500).json({
-      error: 'Lỗi server',
-      details: error.message
+    res.status(500).json({ 
+      error: 'Server error',
+      details: error.message 
     });
   } finally {
     if (client) client.release();
