@@ -95,38 +95,38 @@ const AdminTokens = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="card">
+    <div className="space-y-8 dark:text-white">
+      <div className="card dark:bg-gray-800 dark:border-gray-700">
         <div className="card-header flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Tạo Key Tùy Chỉnh</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tạo Key Tùy Chỉnh</h3>
           <button onClick={handleCreateKeys} className="btn-primary">Tạo {count} key ({requestsPerKey} requests/key)</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
           <div>
-            <label className="text-sm text-gray-600">Requests per key</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300">Requests per key</label>
             <input className="input-field" type="number" value={requestsPerKey} onChange={e => setRequestsPerKey(e.target.value)} />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Số lượng key</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300">Số lượng key</label>
             <input className="input-field" type="number" value={count} onChange={e => setCount(e.target.value)} />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Hết hạn sau (ngày)</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300">Hết hạn sau (ngày)</label>
             <input className="input-field" type="number" placeholder="Không giới hạn" value={expiresInDays} onChange={e => setExpiresInDays(e.target.value)} />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Mô tả (tùy chọn)</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300">Mô tả (tùy chọn)</label>
             <input className="input-field" placeholder="VD: Key cho khách hàng VIP" value={description} onChange={e => setDescription(e.target.value)} />
           </div>
         </div>
       </div>
 
-      <div className="card">
+      <div className="card dark:bg-gray-800 dark:border-gray-700">
         <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">Upload Token từ File Excel</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Upload Token từ File Excel</h3>
         </div>
-        <div className="p-4 space-y-3 text-sm text-gray-700">
-          <div className="bg-blue-50 border border-blue-200 rounded p-3">
+        <div className="p-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded p-3">
             <p>Định dạng file Excel đơn giản:</p>
             <p>• Chỉ cần Cột A: Token</p>
             <p>• Tự động: 50 requests mỗi token</p>
@@ -142,9 +142,9 @@ const AdminTokens = () => {
 
       {/* Created Keys Display */}
       {createdKeys.length > 0 && (
-        <div className="card">
+        <div className="card dark:bg-gray-800 dark:border-gray-700">
           <div className="card-header flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Keys vừa tạo ({createdKeys.length})</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Keys vừa tạo ({createdKeys.length})</h3>
             <div className="space-x-2">
               <button
                 onClick={copyAllKeys}
@@ -163,9 +163,9 @@ const AdminTokens = () => {
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {createdKeys.map((key, index) => (
-                <div key={index} className="border border-gray-200 rounded p-3 bg-gray-50">
+                <div key={index} className="border border-gray-200 dark:border-gray-600 rounded p-3 bg-gray-50 dark:bg-gray-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Key {index + 1}:</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Key {index + 1}:</span>
                     <button
                       onClick={() => copyToClipboard(key.key_value)}
                       className="text-xs text-primary-600 hover:text-primary-800 underline"
@@ -173,10 +173,10 @@ const AdminTokens = () => {
                       Copy
                     </button>
                   </div>
-                  <code className="text-sm bg-white px-2 py-1 rounded border font-mono break-all">
+                  <code className="text-sm bg-white dark:bg-gray-800 px-2 py-1 rounded border dark:border-gray-600 font-mono break-all">
                     {key.key_value}
                   </code>
-                  <div className="mt-2 text-xs text-gray-600">
+                  <div className="mt-2 text-xs text-gray-600 dark:text-gray-300">
                     {key.requests} requests
                   </div>
                 </div>
@@ -186,9 +186,9 @@ const AdminTokens = () => {
         </div>
       )}
 
-      <div className="card">
+      <div className="card dark:bg-gray-800 dark:border-gray-700">
         <div className="card-header flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Danh sách Token</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Danh sách Token</h3>
           <div className="space-x-2 text-sm">
             {['all','available','used','expired'].map(s => (
               <button key={s} onClick={()=>{setStatus(s);setPage(1);}} className={`btn-secondary ${status===s?'!bg-primary-100 !text-primary-700':''}`}>{s==='all'?'Tất cả':s==='available'?'Có sẵn':s==='used'?'Đã dùng':'Hết hạn'}</button>
@@ -196,26 +196,26 @@ const AdminTokens = () => {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requests</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hết hạn</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người dùng</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Token</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Requests</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Hết hạn</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Người dùng</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ngày tạo</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {tokens.map(t => (
                 <tr key={t.id}>
-                  <td className="px-3 py-2 font-mono text-sm">{t.token_value?.slice(0,2)+"..."}</td>
-                  <td className="px-3 py-2 text-sm">{t.requests}</td>
-                  <td className="px-3 py-2 text-sm">{t.is_used ? 'Đã dùng' : (t.is_expired ? 'Hết hạn' : 'Có sẵn')}</td>
-                  <td className="px-3 py-2 text-sm">{t.expires_at ? new Date(t.expires_at).toLocaleDateString('vi-VN') : 'Không có'}</td>
-                  <td className="px-3 py-2 text-sm">{t.used_by_username || '-'}</td>
-                  <td className="px-3 py-2 text-sm">{t.created_at ? new Date(t.created_at).toLocaleTimeString('vi-VN') + ' ' + new Date(t.created_at).toLocaleDateString('vi-VN') : '-'}</td>
+                  <td className="px-3 py-2 font-mono text-sm dark:text-gray-100">{t.token_value?.slice(0,2)+"..."}</td>
+                  <td className="px-3 py-2 text-sm dark:text-gray-100">{t.requests}</td>
+                  <td className="px-3 py-2 text-sm dark:text-gray-100">{t.is_used ? 'Đã dùng' : (t.is_expired ? 'Hết hạn' : 'Có sẵn')}</td>
+                  <td className="px-3 py-2 text-sm dark:text-gray-100">{t.expires_at ? new Date(t.expires_at).toLocaleDateString('vi-VN') : 'Không có'}</td>
+                  <td className="px-3 py-2 text-sm dark:text-gray-100">{t.used_by_username || '-'}</td>
+                  <td className="px-3 py-2 text-sm dark:text-gray-100">{t.created_at ? new Date(t.created_at).toLocaleTimeString('vi-VN') + ' ' + new Date(t.created_at).toLocaleDateString('vi-VN') : '-'}</td>
                 </tr>
               ))}
             </tbody>
@@ -223,7 +223,7 @@ const AdminTokens = () => {
         </div>
         <div className="flex justify-end items-center space-x-2 p-3">
           <button className="btn-secondary" disabled={page<=1} onClick={()=>setPage(p=>Math.max(1,p-1))}>Trước</button>
-          <span className="text-sm text-gray-600">Trang {page} / {totalPages}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">Trang {page} / {totalPages}</span>
           <button className="btn-secondary" disabled={page>=totalPages} onClick={()=>setPage(p=>Math.min(totalPages,p+1))}>Sau</button>
         </div>
       </div>

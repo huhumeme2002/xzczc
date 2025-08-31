@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { adminService } from '../../../services/api';
 
 const StatCard = ({ title, value, sub }) => (
-  <div className="card">
+  <div className="card dark:bg-gray-800 dark:border-gray-700">
     <div className="text-center py-5">
-      <p className="text-sm text-gray-600 mb-1">{title}</p>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-      {sub ? <p className="text-xs text-gray-500 mt-1">{sub}</p> : null}
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{title}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+      {sub ? <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{sub}</p> : null}
     </div>
   </div>
 );
@@ -66,7 +66,7 @@ const AdminOverview = () => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-24 bg-gray-200 rounded animate-pulse" />
+          <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
         ))}
       </div>
     );

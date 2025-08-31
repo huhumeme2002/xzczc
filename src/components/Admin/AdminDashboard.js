@@ -14,22 +14,22 @@ const AdminDashboard = () => {
 
   if (user?.role !== 'admin') {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="card text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:bg-gray-900 min-h-screen">
+        <div className="card dark:bg-gray-800 dark:border-gray-700 text-center">
           <AlertTriangle className="mx-auto h-12 w-12 text-red-600 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Truy cập bị từ chối</h2>
-          <p className="text-gray-600">Bạn không có quyền truy cập vào trang admin.</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Truy cập bị từ chối</h2>
+          <p className="text-gray-600 dark:text-gray-300">Bạn không có quyền truy cập vào trang admin.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">
           Quản lý hệ thống, users và analytics
         </p>
       </div>
@@ -52,8 +52,8 @@ const AdminDashboard = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-primary-100 text-primary-700'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
               <tab.icon className="w-4 h-4 mr-2" />

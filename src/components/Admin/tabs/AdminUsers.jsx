@@ -90,9 +90,9 @@ const AdminUsers = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 dark:text-white">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Quản lý Users</h3>
+        <h3 className="text-lg font-semibold dark:text-white">Quản lý Users</h3>
         <div className="flex space-x-2">
           <input
             type="text"
@@ -105,24 +105,24 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      <div className="card">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="card dark:bg-gray-800 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requests</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Username</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Requests</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Role</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Trạng thái</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Hành động</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {users.map((u) => (
               <tr key={u.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{u.username}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{u.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{u.requests}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.username}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.requests}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs rounded-full ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
                     {u.role}
@@ -149,7 +149,7 @@ const AdminUsers = () => {
       </div>
       <div className="flex justify-end items-center space-x-2 p-3">
         <button className="btn-secondary" disabled={page<=1} onClick={()=>setPage(p=>Math.max(1,p-1))}>Trước</button>
-        <span className="text-sm text-gray-600">Trang {page} / {totalPages}</span>
+        <span className="text-sm text-gray-600 dark:text-gray-300">Trang {page} / {totalPages}</span>
         <button className="btn-secondary" disabled={page>=totalPages} onClick={()=>setPage(p=>Math.min(totalPages,p+1))}>Sau</button>
       </div>
     </div>

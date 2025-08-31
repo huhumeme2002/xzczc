@@ -162,15 +162,15 @@ const CursorProDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:bg-gray-900 min-h-screen">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Current Balance */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="text-center py-6">
                 <div className="flex items-center justify-center mb-2">
-                  <h2 className="text-lg font-semibold text-gray-900 mr-2">Số dư hiện tại</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mr-2">Số dư hiện tại</h2>
                   <button
                     onClick={handleRefreshData}
                     disabled={isRefreshing}
@@ -187,8 +187,8 @@ const CursorProDashboard = () => {
                 <div className="text-4xl font-bold text-primary-600 mb-2">
                   {user?.requests || user?.credits || 0}
                 </div>
-                <p className="text-gray-600">Requests khả dụng</p>
-                <div className="mt-4 text-sm text-gray-500">
+                <p className="text-gray-600 dark:text-gray-300">Requests khả dụng</p>
+                <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
                   <div><strong>{user?.username}</strong></div>
                   <div>Đổi key để thêm requests</div>
                   <div className="mt-2">
@@ -199,10 +199,10 @@ const CursorProDashboard = () => {
             </div>
 
             {/* Get Token */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Lấy Token</h3>
-                <p className="text-sm text-gray-600">Nhấn để lấy token tiếp theo từ cơ sở dữ liệu</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Lấy Token</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Nhấn để lấy token tiếp theo từ cơ sở dữ liệu</p>
               </div>
               <div className="text-center py-6">
                 <div className="mb-4">
@@ -227,21 +227,21 @@ const CursorProDashboard = () => {
                 {/* Recent tokens table */}
                 {recentTokens.length > 0 && (
                   <div className="mt-6 text-left">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Token vừa lấy</h4>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Token vừa lấy</h4>
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
                           <tr>
-                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
-                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Token</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Thời gian</th>
                             <th className="px-3 py-2"></th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                           {recentTokens.map((t, idx) => (
                             <tr key={idx}>
                               <td className="px-3 py-2 font-mono text-sm truncate max-w-xs">{t.token}</td>
-                              <td className="px-3 py-2 text-sm text-gray-600">{new Date(t.time).toLocaleString('vi-VN')}</td>
+                              <td className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">{new Date(t.time).toLocaleString('vi-VN')}</td>
                               <td className="px-3 py-2 text-right">
                                 <button
                                   onClick={async () => { try { await navigator.clipboard.writeText(t.token); toast.success('Đã copy token!'); } catch(_){} }}
@@ -261,10 +261,10 @@ const CursorProDashboard = () => {
             </div>
 
             {/* Get Login Code */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Lấy Mã Login</h3>
-                <p className="text-sm text-gray-600">Lấy mã login hàng ngày (giới hạn theo thời hạn key)</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Lấy Mã Login</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Lấy mã login hàng ngày (giới hạn theo thời hạn key)</p>
               </div>
               <div className="text-center py-6">
                 <div className="mb-4">
@@ -290,11 +290,11 @@ const CursorProDashboard = () => {
             </div>
 
             {/* Redeem Key */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Đổi Key</h3>
-                <p className="text-sm text-gray-600">Nhập key của bạn để thêm requests vào tài khoản</p>
-                <div className="text-sm text-red-600 mt-1">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Đổi Key</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Nhập key của bạn để thêm requests vào tài khoản</p>
+                <div className="text-sm text-red-600 dark:text-red-400 mt-1">
                   <Shield className="inline w-4 h-4 mr-1" />
                   Bảo mật: 3 lần sai = khóa 5 phút
                 </div>
@@ -329,14 +329,14 @@ const CursorProDashboard = () => {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Products */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Sản phẩm khác</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sản phẩm khác</h3>
               </div>
               <div className="space-y-4">
                 {/* Claude Code Max Plan */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Claude Code Max Plan 20x</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Claude Code Max Plan 20x</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center">
@@ -364,7 +364,7 @@ const CursorProDashboard = () => {
 
                 {/* AugmentCode */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">AugmentCode</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">AugmentCode</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-between">
                       <span>🚀 1 ngày unlimited:</span>
@@ -387,7 +387,7 @@ const CursorProDashboard = () => {
 
                 {/* Windsurf */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Windsurf</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Windsurf</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-between">
                       <span>⚡ 500 requests:</span>
@@ -408,16 +408,16 @@ const CursorProDashboard = () => {
                   </div>
                 </div>
 
-                <div className="text-center text-sm text-gray-600 mt-4">
+                <div className="text-center text-sm text-gray-600 dark:text-gray-300 mt-4">
                   Liên hệ admin để mua các sản phẩm trên
                 </div>
               </div>
             </div>
 
             {/* History */}
-            <div className="card">
+            <div className="card dark:bg-gray-800 dark:border-gray-700">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Lịch sử hoạt động</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Lịch sử hoạt động</h3>
               </div>
               <div className="text-center py-4">
                 <button
@@ -430,7 +430,7 @@ const CursorProDashboard = () => {
               </div>
               {showHistory && (
                 <div className="border-t pt-4">
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                     <div>• Đổi key KEY-ABC123 (+100 requests)</div>
                     <div>• Lấy token (-50 requests)</div>
                     <div>• Đổi key KEY-XYZ789 (+200 requests)</div>
@@ -444,11 +444,11 @@ const CursorProDashboard = () => {
         {/* Bottom Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           {/* How Requests Work */}
-          <div className="card">
+          <div className="card dark:bg-gray-800 dark:border-gray-700">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Cách tính 50 Requests</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cách tính 50 Requests</h3>
             </div>
-            <div className="space-y-3 text-sm text-gray-700">
+            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
               <p>📝 Mỗi khi bạn nhập 1 prompt, Cursor sẽ gửi request lên server.</p>
               <p>🟢 Nếu prompt chạy nhanh: chỉ cần 1 request</p>
               <p>🟡 Nếu prompt chạy dài (ví dụ phải chia nhỏ để xử lý): có thể tốn nhiều request cho cùng một prompt</p>
@@ -467,22 +467,22 @@ const CursorProDashboard = () => {
           </div>
 
           {/* Supported Models */}
-          <div className="card">
+          <div className="card dark:bg-gray-800 dark:border-gray-700">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Models Hỗ trợ</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Models Hỗ trợ</h3>
             </div>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Claude Models</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Claude Models</h4>
+                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                   <li>• Claude 4 Sonnet</li>
                   <li>• Claude 4 Sonnet Thinking</li>
                 </ul>
               </div>
               
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">OpenAI Models</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">OpenAI Models</h4>
+                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                   <li>• Sonic Thinking</li>
                   <li>• O3 Thinking</li>
                   <li>• O3 Pro Thinking</li>
@@ -490,15 +490,15 @@ const CursorProDashboard = () => {
               </div>
               
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Google Models</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Google Models</h4>
+                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                   <li>• Gemini 2.5 Pro Thinking</li>
                 </ul>
               </div>
 
-              <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                <h4 className="font-medium text-green-900 mb-2">Tính năng đặc biệt</h4>
-                <ul className="text-sm text-green-700 space-y-1">
+              <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <h4 className="font-medium text-green-900 dark:text-green-400 mb-2">Tính năng đặc biệt</h4>
+                <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
                   <li>• Hỗ trợ MaxMode</li>
                   <li>• Tất cả models đang hoạt động bình thường</li>
                 </ul>

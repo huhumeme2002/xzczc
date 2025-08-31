@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import CursorProLayout from './components/Layout/CursorProLayout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
@@ -36,7 +37,8 @@ const NotFound = () => {
 
 function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <Router>
         <CursorProLayout>
           <Routes>
@@ -96,7 +98,8 @@ function App() {
           </Routes>
         </CursorProLayout>
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
