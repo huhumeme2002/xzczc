@@ -43,10 +43,11 @@ const AdminUsers = () => {
     const adjustment = prompt('Nhập số requests muốn thêm/bớt (vd: 100 hoặc -50):', '0');
     if (adjustment !== null && !isNaN(adjustment) && adjustment !== '0') {
       try {
-        await adminService.adjustUserExpiry(u.id, Number(adjustment), null, 'adjust_requests');
+        await adminService.adjustUserRequests(u.id, Number(adjustment), `Admin adjusted ${adjustment} requests`);
         alert('Cập nhật requests thành công!');
         await loadUsers();
       } catch (error) {
+        console.error('Adjust requests error:', error);
         alert('Không thể cập nhật requests: ' + (error.response?.data?.error || error.message || 'Lỗi không xác định'));
       }
     }
@@ -71,10 +72,18 @@ const AdminUsers = () => {
     
     if (expiryDays !== null && !isNaN(expiryDays) && Number(expiryDays) > 0) {
       try {
-        await adminService.adjustUserExpiry(u.id, null, Number(expiryDays), 'set_expiry');
+        // Calculate new expiry time
+        const newExpiryTime = new Date();
+        newExpiryTime.setDate(newExpiryTime.getDate() + Number(expiryDays));
+        
+        await adminService.updateUser(u.id, { 
+          expiry_time: newExpiryTime.toISOString(),
+          is_expired: false
+        });
         alert(`Đã gia hạn ${expiryDays} ngày cho ${u.username}!`);
         await loadUsers();
       } catch (error) {
+        console.error('Adjust expiry error:', error);
         alert('Không thể gia hạn: ' + (error.response?.data?.error || error.message || 'Lỗi không xác định'));
       }
     }

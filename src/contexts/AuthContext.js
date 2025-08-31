@@ -121,32 +121,20 @@ export const AuthProvider = ({ children }) => {
 
       console.log('🔄 Refreshing user data from server...');
 
-      // Use the new user profile endpoint with expiry check
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api-functions-q81r2sspq-khanhs-projects-3f746af3.vercel.app'}/api/user/profile-new`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch user data');
-      }
-
-      const data = await response.json();
+      // Use the existing user profile endpoint
+      const { userService } = await import('../services/api');
+      const response = await userService.getProfile();
       
-      if (data.success && data.user) {
-        updateUser(data.user);
-        console.log('✅ User data refreshed:', data.user.requests, 'requests');
+      if (response && response.user) {
+        updateUser(response.user);
+        console.log('✅ User data refreshed:', response.user.requests, 'requests');
+        return true;
       }
       
-      return true;
+      throw new Error('No user data received');
     } catch (error) {
-      // Even local refresh shouldn't fail, but handle gracefully
-      console.warn('⚠️ Refresh completed with minor issues');
-      return true;
+      console.error('❌ Failed to refresh user data:', error);
+      return false;
     }
   };
 
