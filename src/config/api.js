@@ -32,7 +32,7 @@ export const API_CONFIG = {
     ADMIN_BLOCKED_USERS: '/api/admin/blocked-users',
 
     // User Data (using requests-based endpoints)  
-    USER_PROFILE: '/api/user/profile',
+    USER_PROFILE: '/api/profile',
     USER_REQUESTS: '/api/user-requests',
     USER_TRANSACTIONS: '/api/user-transactions',
     USER_BALANCE: '/api/user-balance',
