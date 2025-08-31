@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LogOut, Settings } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { LogOut, Settings, Moon, Sun } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
 const CursorProLayout = ({ children }) => {
   const { user, logout, isAuthenticated } = useAuth();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,27 +18,39 @@ const CursorProLayout = ({ children }) => {
   // Removed timer display per request
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header - Only show on authenticated pages */}
       {isAuthenticated && (
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div>
                 <Link to="/dashboard">
-                  <h1 className="text-2xl font-bold text-gray-900">Cursor Pro Thinking</h1>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Cursor Pro Thinking</h1>
                 </Link>
                 {/* Timer removed as requested */}
               </div>
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   Chào mừng trở lại, <strong>{user?.username}</strong>
                 </span>
                 <div className="flex items-center space-x-2">
+                  {/* Theme Toggle Button */}
+                  <button
+                    onClick={toggleDarkMode}
+                    className="flex items-center justify-center w-10 h-10 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    title={isDarkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+                  >
+                    {isDarkMode ? (
+                      <Sun className="w-5 h-5" />
+                    ) : (
+                      <Moon className="w-5 h-5" />
+                    )}
+                  </button>
                   {user?.role === 'admin' && (
-                    <Link 
+                    <Link
                       to="/admin"
-                      className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                      className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     >
                       <Settings className="w-4 h-4" />
                       <span>Quản trị</span>
@@ -44,7 +58,7 @@ const CursorProLayout = ({ children }) => {
                   )}
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Đăng xuất</span>
@@ -67,7 +81,7 @@ const CursorProLayout = ({ children }) => {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
+            background: isDarkMode ? '#1f2937' : '#363636',
             color: '#fff',
           },
           success: {
