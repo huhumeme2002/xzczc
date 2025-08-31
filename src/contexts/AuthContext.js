@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services/api';
+import { authService, userService } from '../services/api';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
@@ -123,22 +123,20 @@ export const AuthProvider = ({ children }) => {
         console.error('❌ No auth token found');
         return false;
       }
-      if (!user) {
-        console.log('⚠️ No user data available to refresh');
-        return false;
+
+      console.log('🔄 Refreshing user data from server...');
+      const profile = await userService.getProfile();
+
+      if (profile && (typeof profile.requests !== 'undefined')) {
+        const updatedUser = { ...user, ...profile };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        console.log('✅ Refreshed user data:', { requests: updatedUser.requests, expires_at: updatedUser.expires_at });
+        return true;
       }
 
-      console.log('🔄 Refreshing user data...');
-
-      // Temporarily disable server refresh due to CORS issues
-      // Force logout and login again to get fresh data
-      const currentUser = JSON.parse(localStorage.getItem('user'));
-      if (currentUser) {
-        setUser({...currentUser});
-        console.log('⚠️ UI refreshed. Logout and login again for fresh data.');
-      }
-      
-      return true;
+      console.warn('⚠️ Server returned unexpected profile shape:', profile);
+      return false;
     } catch (error) {
       console.error('❌ Failed to refresh user data:', error);
       return false;
