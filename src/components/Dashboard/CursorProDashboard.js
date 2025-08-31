@@ -149,9 +149,9 @@ const CursorProDashboard = () => {
     try {
       const success = await refreshUserData();
       if (success) {
-        toast.success('Đã cập nhật dữ liệu mới nhất!');
+        toast.info('UI đã refresh. Để có data mới nhất, hãy logout và login lại.');
       } else {
-        toast.error('Không thể cập nhật dữ liệu');
+        toast.error('Không thể refresh. Hãy logout và login lại.');
       }
     } catch (error) {
       console.error('Refresh error:', error);

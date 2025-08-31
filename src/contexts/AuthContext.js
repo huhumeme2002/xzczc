@@ -119,19 +119,17 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      console.log('🔄 Refreshing user data from server...');
+      console.log('🔄 Refreshing user data...');
 
-      // Use the existing user profile endpoint
-      const { userService } = await import('../services/api');
-      const response = await userService.getProfile();
-      
-      if (response && response.user) {
-        updateUser(response.user);
-        console.log('✅ User data refreshed:', response.user.requests, 'requests');
-        return true;
+      // Temporarily disable server refresh due to CORS issues
+      // Force logout and login again to get fresh data
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      if (currentUser) {
+        setUser({...currentUser});
+        console.log('⚠️ UI refreshed. Logout and login again for fresh data.');
       }
       
-      throw new Error('No user data received');
+      return true;
     } catch (error) {
       console.error('❌ Failed to refresh user data:', error);
       return false;
